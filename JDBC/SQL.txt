@@ -1,0 +1,1 @@
+SELECT * FROM booth INNER JOIN booth_contact ON booth.id = booth_contact.booth_id 
