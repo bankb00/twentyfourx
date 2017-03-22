@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController //Test
@@ -29,7 +31,19 @@ public class ExhibitionController {
     @Autowired
     private BoothContactRepository boothContactRepository;
 
+    private List<String> categories = new ArrayList<>(Arrays.asList("Food", "Home & Decorate","Technology & Electronics Devices"
+            ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion"));
 
+        /*categories.add("Food");
+        categories.add("Home & Decorate");
+        categories.add("Technology & Electronic Devices");
+        categories.add("Book Fair");
+        categories.add("Travel & Tourism");
+        categories.add("Motor Show");
+        categories.add("Trade Show");
+        categories.add("Business");
+        categories.add("Pet");
+        categories.add("Cloth & Fashion");*/
 
     @GetMapping(path="/add") // Map ONLY GET Requests
     public @ResponseBody String addExhibition (@RequestParam String name) {
@@ -72,6 +86,20 @@ public class ExhibitionController {
         return boothRepository.findBoothByExhibitionId(exhibitionId);
 
 
+    }
+
+    //Filter By category
+    @RequestMapping(value="/category",method = RequestMethod.GET)
+    @ResponseBody
+    public List<Exhibition> filterByCategory(@RequestParam String category){
+        return exhibitionRepository.findByCategory(category);
+    }
+
+    //List of Category
+    @RequestMapping(value="/categories",method= RequestMethod.GET)
+    public @ResponseBody List<String> getAllCategories() {
+
+        return categories;
     }
 
 }
