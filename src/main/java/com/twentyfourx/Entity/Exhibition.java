@@ -33,9 +33,8 @@ public class Exhibition {
 
     private boolean isPassed;
 
-    /*public Exhibition() throws ParseException {
-        Exhibition exhibition = new Exhibition();
-        exhibition.isPassed = checkDate();
+    /*public Exhibition()  {
+        this.isPassed = checkDate();
     }*/
 
 
@@ -164,12 +163,17 @@ public class Exhibition {
         }
     }*/
 
-    public boolean checkDate() throws ParseException {
+    public boolean checkDate()  {
 
         String string = this.getStartDate();
 
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = format.parse(string);
+        Date date = null;
+        try {
+            date = format.parse(string);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         LocalDate myLocaldate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         //int i = 0;
         LocalDate localDate = LocalDate.now();
@@ -195,34 +199,3 @@ public class Exhibition {
 
 }
 
-
-
-
-/*import javax.persistence.*;
-
-@Entity
-@Table(name = "Exhibition")
-public class Exhibition {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int exhibitionId;
-
-    private String exhibitionName;
-
-    public int getExhibitionId(){
-        return exhibitionId;
-    }
-
-    public String getExhibitionName(){
-        return exhibitionName;
-    }
-
-    public void setExhibitionId(int exhibitionId){
-        this.exhibitionId = exhibitionId;
-    }
-
-    public void setExhibitionName(String exhibitionName){
-        this.exhibitionName = exhibitionName;
-    }
-}*/

@@ -100,6 +100,13 @@ public class ExhibitionController {
 
     }
 
+    //Get Latest booth
+    @RequestMapping(value="/testLatest",method = RequestMethod.GET)
+    //@ResponseBody
+    public List<Exhibition> getLatestExhibition(@RequestParam boolean isPassed){
+        return exhibitionRepository.findByIsPassed(isPassed);
+    }
+
     /*@RequestMapping(value="/testDate/{id}",method= RequestMethod.GET)
     public  void test(@PathVariable int id) throws ParseException {
         //DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
