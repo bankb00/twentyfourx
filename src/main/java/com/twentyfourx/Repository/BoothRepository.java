@@ -16,4 +16,5 @@ import java.util.List;
 
 public interface BoothRepository extends CrudRepository<Booth, Integer>, JpaRepository<Booth, Integer>,Repository<Booth, Integer> {
     List<Booth> findBoothByExhibitionId(int id);
+    Booth findBoothById(int id);
 }

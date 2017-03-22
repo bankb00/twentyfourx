@@ -6,7 +6,6 @@ package com.twentyfourx.APIController;
 
 import com.twentyfourx.Entity.Booth;
 import com.twentyfourx.Entity.Exhibition;
-import com.twentyfourx.Repository.BoothContactRepository;
 import com.twentyfourx.Repository.BoothRepository;
 import com.twentyfourx.Repository.ExhibitionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,22 +27,11 @@ public class ExhibitionController {
     private ExhibitionRepository exhibitionRepository;
     @Autowired
     private BoothRepository boothRepository;
-    @Autowired
-    private BoothContactRepository boothContactRepository;
+    /*@Autowired
+    private BoothContactRepository boothContactRepository;*/
 
     private List<String> categories = new ArrayList<>(Arrays.asList("Food", "Home & Decorate","Technology & Electronics Devices"
             ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion"));
-
-        /*categories.add("Food");
-        categories.add("Home & Decorate");
-        categories.add("Technology & Electronic Devices");
-        categories.add("Book Fair");
-        categories.add("Travel & Tourism");
-        categories.add("Motor Show");
-        categories.add("Trade Show");
-        categories.add("Business");
-        categories.add("Pet");
-        categories.add("Cloth & Fashion");*/
 
     @GetMapping(path="/add") // Map ONLY GET Requests
     public @ResponseBody String addExhibition (@RequestParam String name) {
@@ -101,6 +89,27 @@ public class ExhibitionController {
 
         return categories;
     }
+
+
+    //Get booth
+    @RequestMapping(value="/{exhibitionId}/booths/{boothId}",method= RequestMethod.GET)
+    public @ResponseBody Booth getBooth(@PathVariable int boothId){
+        // This returns a JSON or XML with the users
+        return boothRepository.findBoothById(boothId);
+
+
+    }
+
+    /*@RequestMapping(value="/testDate/{id}",method= RequestMethod.GET)
+    public  void test(@PathVariable int id) throws ParseException {
+        //DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        //LocalDate localDate = LocalDate.now();
+        //System.out.println(dtf.format(localDate)); //2016/11/16
+        exhibitionRepository.findById(id).checkDate();
+        //System.out.println(exhibitionRepository.findById(1).getStartDate());
+
+    }*/
+
 
 }
 

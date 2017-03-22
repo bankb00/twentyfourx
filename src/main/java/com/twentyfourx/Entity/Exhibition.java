@@ -5,12 +5,18 @@ package com.twentyfourx.Entity;
  */
 
 import javax.persistence.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 @Entity
 @Table(name = "Exhibition")
 public class Exhibition {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private String description;
@@ -20,6 +26,18 @@ public class Exhibition {
     private String endDate;
     private String posterUrl;
     private boolean isFavourited;
+    private Double latitude;
+    private Double longtitude;
+    private String agendaUrl;
+    private String mapUrl;
+
+    private boolean isPassed;
+
+    /*public Exhibition() throws ParseException {
+        Exhibition exhibition = new Exhibition();
+        exhibition.isPassed = checkDate();
+    }*/
+
 
     public int getId() {
         return id;
@@ -92,6 +110,89 @@ public class Exhibition {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongtitude() {
+        return longtitude;
+    }
+
+    public void setLongtitude(Double longtitude) {
+        this.longtitude = longtitude;
+    }
+
+    public String getAgendaUrl() {
+        return agendaUrl;
+    }
+
+    public void setAgendaUrl(String agendaUrl) {
+        this.agendaUrl = agendaUrl;
+    }
+
+    public String getMapUrl() {
+        return mapUrl;
+    }
+
+    public void setMapUrl(String mapUrl) {
+        this.mapUrl = mapUrl;
+    }
+
+
+    public boolean isPassed() {
+        return isPassed;
+    }
+
+    public void setPassed(boolean passed) {
+        isPassed = passed;
+    }
+
+    /*public void checkDate() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDate localDate = LocalDate.now();
+        Date myDate = this.getStartDate();
+        LocalDate myLocaldate = myDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        //System.out.println(dtf.format(localDate)); //2016/11/16
+
+        if(myLocaldate.isBefore(localDate)){
+            this.isPassed = true;
+        }
+    }*/
+
+    public boolean checkDate() throws ParseException {
+
+        String string = this.getStartDate();
+
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = format.parse(string);
+        LocalDate myLocaldate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        //int i = 0;
+        LocalDate localDate = LocalDate.now();
+        if (myLocaldate.isBefore(localDate)) {
+            //this.isPassed = true;
+            //this.isPassed = true;
+            //i = 1;
+            return true;
+        } else {
+            //i = 0;
+            //this.isPassed = false;
+            return false;
+        }
+
+        /*System.out.println("");
+        System.out.println("");
+        System.out.println(localDate);
+        System.out.println(myLocaldate);
+        System.out.println(i);
+        */
+    }
+
+
 }
 
 
