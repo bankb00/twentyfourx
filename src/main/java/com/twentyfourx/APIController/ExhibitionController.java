@@ -414,6 +414,12 @@ public class ExhibitionController {
 
     }
 
+    /*public void checkToken(){
+        GET graph.facebook.com/debug_token?
+                input_token={token-to-inspect}
+                &access_token={app-token-or-admin-token}
+    }*/
+
     /*public void upDateMethod(String value,int id){
         if(value!=null){
             try
