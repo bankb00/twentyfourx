@@ -37,6 +37,23 @@ public class ExhibitionController {
     private List<String> categories = new ArrayList<>(Arrays.asList("Food", "Home & Decorate","Technology & Electronics Devices"
             ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion"));
 
+
+    @RequestMapping(value = "/getsize", method = RequestMethod.GET)
+    public void checkSize(){
+        List<Exhibition> listEx = exhibitionRepository.findAll();
+
+        int size = listEx.size();
+        System.out.println(size);
+        for(int i = 0 ; i<size ; i++){
+            //boolean status = listEx.get(i).checkDate();
+            listEx.get(i).setPassed(listEx.get(i).checkDate());
+            System.out.println(" ");
+            System.out.println(listEx.get(i).isPassed());
+            System.out.println(listEx.get(i).getStartDate());
+        }
+    }
+
+
     @GetMapping(path="/add") // Map ONLY GET Requests
     public @ResponseBody String addExhibition (@RequestParam String name) {
         // @ResponseBody means the returned String is the response, not a view name
@@ -115,6 +132,7 @@ public class ExhibitionController {
     @RequestMapping(value="/testSQL",method = RequestMethod.GET)
     @ResponseBody
     public List<Exhibition> getPassExhibition(){
+        checkSize();
         List<Exhibition> listEx= new ArrayList<Exhibition>();
         try {
             String url = "jdbc:mysql://localhost:3306/bankza";
@@ -123,8 +141,7 @@ public class ExhibitionController {
             ResultSet rs;
 
 
-            rs = stmt.executeQuery("SELECT * FROM exhibition WHERE is_passed = false ");
-
+            rs = stmt.executeQuery("SELECT * FROM exhibition WHERE is_passed = false "+" ORDER BY start_date ASC");
             while ( rs.next() ) {
                 //String lastName = rs.getString("name");
                 //System.out.println(lastName);
