@@ -51,6 +51,23 @@ public class Exhibition {
         this.isPassed = isPassed;
     }
 
+    public Exhibition(){
+        //this.id = id;
+        this.name = "";
+        this.description = "";
+        this.location = "";
+        this.category = "";
+        this.startDate = "";
+        this.endDate = "";
+        this.posterUrl = "";
+        this.isFavourited = false;
+        this.latitude = 0.00;
+        this.longtitude = 0.00;
+        this.agendaUrl = "";
+        this.mapUrl = "";
+        this.isPassed = false;
+    }
+
 
     public int getId() {
         return id;
