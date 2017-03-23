@@ -153,12 +153,12 @@ public class ExhibitionController {
 
     }
 
-    //Get Latest booth
+    /*//Get Latest booth
     @RequestMapping(value="/testLatest",method = RequestMethod.GET)
     //@ResponseBody
     public List<Exhibition> getLatestExhibition(@RequestParam boolean isPassed){
         return exhibitionRepository.findByIsPassed(isPassed);
-    }
+    }*/
 
     //get all latest Exhibition
     @RequestMapping(value="/latest",method = RequestMethod.GET)
@@ -238,6 +238,198 @@ public class ExhibitionController {
         }
     }
 
+    //update ex
+    @RequestMapping(value="/{exhibitionId}/update",method = RequestMethod.POST)
+    @ResponseBody
+    public void updateExhibition(@RequestParam(value = "name", required=false) final String newName
+    ,@RequestParam(value = "location", required=false) String location
+    ,@RequestParam(value = "category", required=false) String category
+    ,@RequestParam(value = "startDate", required=false) String startDate
+    ,@RequestParam(value = "endDate", required=false) String endDate
+    ,@RequestParam(value = "posterUrl", required=false) String posterUrl
+    ,@RequestParam(value = "description", required=false) String description
+    ,@RequestParam(value = "latitude", required=false) Double latitude
+    ,@RequestParam(value = "longtitude", required=false) Double longtitude
+    ,@RequestParam(value = "agendaUrl", required=false) String agendaUrl
+    ,@RequestParam(value = "mapUrl", required=false) String mapUrl
+    ,@PathVariable int exhibitionId) throws SQLException {
+
+        int id = exhibitionId;
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        if(newName!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET name = ? WHERE id = ? ");
+                ps.setString(1,newName);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(location!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET location = ? WHERE id = ? ");
+                ps.setString(1,location);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(category!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET category = ? WHERE id = ? ");
+                ps.setString(1,category);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(startDate!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET start_date = ? WHERE id = ? ");
+                ps.setString(1,startDate);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(endDate!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET end_date = ? WHERE id = ? ");
+                ps.setString(1,endDate);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(posterUrl!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET poster_url = ? WHERE id = ? ");
+                ps.setString(1,posterUrl);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(description!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET description = ? WHERE id = ? ");
+                ps.setString(1,description);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(latitude!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET latitude = ? WHERE id = ? ");
+                ps.setDouble(1,latitude);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(longtitude!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET longtitude = ? WHERE id = ? ");
+                ps.setDouble(1,longtitude);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(agendaUrl!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET agenda_url = ? WHERE id = ? ");
+                ps.setString(1,agendaUrl);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(mapUrl!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET map_url = ? WHERE id = ? ");
+                ps.setString(1,mapUrl);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+
+    }
+
+    /*public void upDateMethod(String value,int id){
+        if(value!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET name = ? WHERE id = ? ");
+                ps.setString(1,newName);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+    }*/
 }
 
 
