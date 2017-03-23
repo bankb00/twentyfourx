@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.*;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -38,18 +40,36 @@ public class ExhibitionController {
             ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion"));
 
 
-    @RequestMapping(value = "/getsize", method = RequestMethod.GET)
-    public void checkSize(){
+    //@RequestMapping(value = "/getsize", method = RequestMethod.GET)
+    public void checkSize() throws SQLException {
         List<Exhibition> listEx = exhibitionRepository.findAll();
 
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        boolean status;
         int size = listEx.size();
-        System.out.println(size);
+        int id;
         for(int i = 0 ; i<size ; i++){
             //boolean status = listEx.get(i).checkDate();
             listEx.get(i).setPassed(listEx.get(i).checkDate());
-            System.out.println(" ");
-            System.out.println(listEx.get(i).isPassed());
-            System.out.println(listEx.get(i).getStartDate());
+            status = listEx.get(i).checkDate();
+            id = listEx.get(i).getId();
+            try
+        {
+            Statement st = conn.createStatement();
+            if(status==true) {
+                st.executeUpdate("UPDATE exhibition SET is_passed= 1 WHERE id = " + id + "");
+            }
+            else {
+                st.executeUpdate("UPDATE exhibition SET is_passed= 0 WHERE id = " + id + "");
+            }
+
+
+        }
+        catch (SQLException ex)
+        {
+            System.err.println(ex.getMessage());
+        }
         }
     }
 
@@ -128,10 +148,10 @@ public class ExhibitionController {
         return exhibitionRepository.findByIsPassed(isPassed);
     }
 
-    //test sql
-    @RequestMapping(value="/testSQL",method = RequestMethod.GET)
+    //get all latest Exhibition
+    @RequestMapping(value="/latest",method = RequestMethod.GET)
     @ResponseBody
-    public List<Exhibition> getPassExhibition(){
+    public List<Exhibition> getUnPassExhibition() throws SQLException {
         checkSize();
         List<Exhibition> listEx= new ArrayList<Exhibition>();
         try {
@@ -174,15 +194,6 @@ public class ExhibitionController {
         return listEx;
     }
 
-    /*@RequestMapping(value="/testDate/{id}",method= RequestMethod.GET)
-    public  void test(@PathVariable int id) throws ParseException {
-        //DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        //LocalDate localDate = LocalDate.now();
-        //System.out.println(dtf.format(localDate)); //2016/11/16
-        exhibitionRepository.findById(id).checkDate();
-        //System.out.println(exhibitionRepository.findById(1).getStartDate());
-
-    }*/
 
 
 }
@@ -195,55 +206,3 @@ public class ExhibitionController {
 
 
 
-//import com.twentyfourx.Entity.Exhibition;
-//import com.twentyfourx.Repository.ExhibitionRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.transaction.annotation.Isolation;
-//import org.springframework.transaction.annotation.Transactional;
-//import org.springframework.web.bind.annotation.*;
-//@RestController
-//@RequestMapping("/api")
-//@Transactional(readOnly = false, rollbackFor = Exception.class,
-//        isolation = Isolation.READ_COMMITTED)
-//public class ExhibitionController {
-//    private ExhibitionRepository exhibitionRepository;
-//    @Autowired
-//    public ExhibitionController(ExhibitionRepository exhibitionRepository) {
-//        this.exhibitionRepository = exhibitionRepository;
-//    }
-//    @RequestMapping(value = "", method = RequestMethod.POST)
-//    public int addExhibition(@RequestBody Exhibition exhibition) {
-//        exhibitionRepository.add(exhibition);
-//        return exhibition.getExhibitionId();
-//    }
-///*    @RequestMapping(value = "", method = RequestMethod.GET)
-//    public List<Patient> getAllPatients() {
-//        return patientRepository.getAll();
-//    }*/
-//
-//    /*@RequestMapping(value = "/{exhibitionId}", method = RequestMethod.GET)
-//    public Exhibition getExhibition(@PathVariable int exhibitionId) {
-//        return exhibitionRepository.get(exhibitionId);
-//    }*/
-//    @RequestMapping(value = "/1", method = RequestMethod.GET)
-//    public Exhibition getExhibition() {
-//        return exhibitionRepository.get(1);
-//    }
-//
-//    /*@RequestMapping(value = "/get", method = RequestMethod.GET)
-//    public int getExhibition() {
-//        return 123;
-//    }*/
-//
-//    @RequestMapping(value = "/{exhibitionId}", method = RequestMethod.PUT)
-//    public void updateExhibition(@PathVariable int exhibitionId,
-//                              @RequestBody Exhibition exhibitionRequest) {
-//        Exhibition exhibition = exhibitionRepository.get(exhibitionId);
-//        exhibition.setExhibitionName(exhibitionRequest.getExhibitionName());
-//    }
-//    @RequestMapping(value = "/{exhibitionId}", method = RequestMethod.DELETE)
-//    public void removeExhibition(@PathVariable int exhibitionId) {
-//        Exhibition exhibition = exhibitionRepository.get(exhibitionId);
-//        exhibitionRepository.remove(exhibition);
-//    }
-//}
