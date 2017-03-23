@@ -5,12 +5,10 @@ package com.twentyfourx.APIController;
  */
 //  Query1.java:  Query an mSQL database using JDBC.
 
-import java.sql.*;
-
 /**
  * A JDBC SELECT (JDBC query) example program.
  */
-public class Test {
+/*public class Test {
 
     public static void main (String[] args) {
         try {
@@ -19,9 +17,9 @@ public class Test {
             Statement stmt = conn.createStatement();
             ResultSet rs;
 
-            rs = stmt.executeQuery("SELECT Lname FROM Customers WHERE Snum = 2001");
+            rs = stmt.executeQuery("SELECT * FROM Exhibition WHERE isPassed = FALSE ");
             while ( rs.next() ) {
-                String lastName = rs.getString("Lname");
+                String lastName = rs.getString("name");
                 System.out.println(lastName);
             }
             conn.close();
@@ -30,4 +28,4 @@ public class Test {
             System.err.println(e.getMessage());
         }
     }
-}
+}*/

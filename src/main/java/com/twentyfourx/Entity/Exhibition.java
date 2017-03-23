@@ -33,9 +33,23 @@ public class Exhibition {
 
     private boolean isPassed;
 
-    /*public Exhibition()  {
-        this.isPassed = checkDate();
-    }*/
+    public Exhibition(int id,String name, String description, String location, String category, String startDate, String endDate, String posterUrl, boolean isFavourited
+    ,Double latitude, Double longtitude, String agendaUrl, String mapUrl, boolean isPassed)  {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.category = category;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.posterUrl = posterUrl;
+        this.isFavourited = isFavourited;
+        this.latitude = latitude;
+        this.longtitude = longtitude;
+        this.agendaUrl = agendaUrl;
+        this.mapUrl = mapUrl;
+        this.isPassed = isPassed;
+    }
 
 
     public int getId() {

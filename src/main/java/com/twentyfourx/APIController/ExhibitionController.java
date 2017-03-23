@@ -14,6 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,9 +42,9 @@ public class ExhibitionController {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
-        Exhibition exhibition = new Exhibition();
-        exhibition.setExhibitionName(name);
-        exhibitionRepository.save(exhibition);
+        //Exhibition exhibition = new Exhibition();
+        //exhibition.setExhibitionName(name);
+        //exhibitionRepository.save(exhibition);
 
         return "Saved";
     }
@@ -105,6 +109,52 @@ public class ExhibitionController {
     //@ResponseBody
     public List<Exhibition> getLatestExhibition(@RequestParam boolean isPassed){
         return exhibitionRepository.findByIsPassed(isPassed);
+    }
+
+    //test sql
+    @RequestMapping(value="/testSQL",method = RequestMethod.GET)
+    @ResponseBody
+    public List<Exhibition> getPassExhibition(){
+        List<Exhibition> listEx= new ArrayList<Exhibition>();
+        try {
+            String url = "jdbc:mysql://localhost:3306/bankza";
+            Connection conn = DriverManager.getConnection(url,"root","password");
+            Statement stmt = conn.createStatement();
+            ResultSet rs;
+
+
+            rs = stmt.executeQuery("SELECT * FROM exhibition WHERE is_passed = false ");
+
+            while ( rs.next() ) {
+                //String lastName = rs.getString("name");
+                //System.out.println(lastName);
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                String location = rs.getString("location");
+                String category = rs.getString("category");
+                String startDate = rs.getString("start_date");
+                String endDate = rs.getString("end_date");
+                String posterUrl = rs.getString("poster_url");
+                boolean isFavourited = rs.getBoolean("is_favourited");
+                Double latitude = rs.getDouble("latitude");
+                Double longtitude = rs.getDouble("longtitude");
+                String agendaUrl = rs.getString("agenda_url");
+                String mapUrl = rs.getString("map_url");
+                boolean isPassed = rs.getBoolean("is_passed");
+
+                Exhibition exhibition = new Exhibition(id,name,description,location,category,startDate,endDate,posterUrl,isFavourited,latitude
+                ,longtitude,agendaUrl,mapUrl,isPassed);
+
+                listEx.add(exhibition);
+            }
+            conn.close();
+            }
+            catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return listEx;
     }
 
     /*@RequestMapping(value="/testDate/{id}",method= RequestMethod.GET)
