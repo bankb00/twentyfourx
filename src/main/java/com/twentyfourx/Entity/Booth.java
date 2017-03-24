@@ -4,6 +4,7 @@ package com.twentyfourx.Entity;
  * Created by Thanawat on 3/20/2017.
  */
 import javax.persistence.*;
+import java.sql.SQLException;
 
 @Entity
 @Table(name = "Booth")
@@ -23,11 +24,11 @@ public class Booth {
         return id;
     }
 
-    public String getExhibitionName() {
+    public String getName() {
         return name;
     }
 
-    public void setExhibitionName(String exhibitionName) {
+    public void setName(String exhibitionName) {
         this.name = exhibitionName;
     }
 
@@ -35,7 +36,7 @@ public class Booth {
         return isFavourited;
     }
 
-    public void setFavourited(boolean favourited) {
+    public void setFavourited(boolean favourited) throws SQLException {
         isFavourited = favourited;
     }
 

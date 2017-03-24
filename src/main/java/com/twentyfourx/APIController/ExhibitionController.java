@@ -180,12 +180,12 @@ public class ExhibitionController {
 
 
     //get booths
-    @RequestMapping(value="/{exhibitionId}/booths ",method= RequestMethod.GET)
+    @RequestMapping(value="/{exhibitionId}/booths",method= RequestMethod.GET)
     public @ResponseBody List<Booth> getAllBooths(@PathVariable int exhibitionId){
-        // This returns a JSON or XML with the users
+    //public void getAllBooths(@PathVariable int exhibitionId){
+
+
         return boothRepository.findBoothByExhibitionId(exhibitionId);
-
-
     }
 
     //Filter By category
@@ -272,6 +272,22 @@ public class ExhibitionController {
 
 
     }
+
+    //get data from body
+    /*@RequestMapping(value="/bank",method= RequestMethod.POST)
+    public void get(@RequestBody JsonO){
+        System.out.println(name);
+
+    }*/
+    /*@ResponseBody
+    @RequestMapping(value="/bank",method= RequestMethod.POST)
+    public void saveData(HttpServletRequest request
+                         ){
+        JSONObject myObject = new JSONObject(result);
+        String jsonString = request.getParameter("json");
+        //String jsonString = request.getAttribute("json");
+        System.out.println(jsonString);
+    }*/
 
 
     //Register with header for user
