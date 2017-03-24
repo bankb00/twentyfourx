@@ -120,8 +120,22 @@ public class ExhibitionController {
 
     }
 
+    //save Exhibition fav
+    @RequestMapping(value = "/{exhibitionId}/saveFavourited", method=RequestMethod.GET)
+    @ResponseBody
+    public void saveFavExhi(@PathVariable int exhibitionId) throws SQLException {
+        exhibitionRepository.findById(exhibitionId).setFavourited(true);
+    }
+
+    //UnFav Exhibition fav
+    @ResponseBody
+    @RequestMapping(value = "/{exhibitionId}/unFavourited", method=RequestMethod.GET)
+    public void unFavExhi(@PathVariable int exhibitionId) throws SQLException {
+        exhibitionRepository.findById(exhibitionId).setFavourited(false);
+    }
+
     //get booths
-    @RequestMapping(value="/{exhibitionId}/booths",method= RequestMethod.GET)
+    @RequestMapping(value="/{exhibitionId}/booths ",method= RequestMethod.GET)
     public @ResponseBody List<Booth> getAllBooths(@PathVariable int exhibitionId){
         // This returns a JSON or XML with the users
         return boothRepository.findBoothByExhibitionId(exhibitionId);
@@ -153,12 +167,18 @@ public class ExhibitionController {
 
     }
 
-    /*//Get Latest booth
-    @RequestMapping(value="/testLatest",method = RequestMethod.GET)
-    //@ResponseBody
-    public List<Exhibition> getLatestExhibition(@RequestParam boolean isPassed){
-        return exhibitionRepository.findByIsPassed(isPassed);
-    }*/
+    //Save e-bro
+    @RequestMapping(value="/{exhibitionId}/booths/{boothId}/save",method= RequestMethod.POST)
+    public @ResponseBody Booth saveEBro(@PathVariable int boothId, int exhibitionId){
+        // This returns a JSON or XML with the users
+
+        String brochureUrl = boothRepository.findBoothById(boothId).getBrochureUrl();
+        System.out.println(exhibitionId);
+        return boothRepository.findBoothById(boothId);
+
+
+    }
+
 
     //get all latest Exhibition
     @RequestMapping(value="/latest",method = RequestMethod.GET)
@@ -414,28 +434,7 @@ public class ExhibitionController {
 
     }
 
-    /*public void checkToken(){
-        GET graph.facebook.com/debug_token?
-                input_token={token-to-inspect}
-                &access_token={app-token-or-admin-token}
-    }*/
 
-    /*public void upDateMethod(String value,int id){
-        if(value!=null){
-            try
-            {
-                PreparedStatement ps = conn.prepareStatement(
-                        "UPDATE exhibition SET name = ? WHERE id = ? ");
-                ps.setString(1,newName);
-                ps.setInt(2,id);
-                ps.executeUpdate();
-            }
-            catch (SQLException ex)
-            {
-                System.err.println(ex.getMessage());
-            }
-        }
-    }*/
 }
 
 

@@ -5,6 +5,10 @@ package com.twentyfourx.Entity;
  */
 
 import javax.persistence.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -129,8 +133,23 @@ public class Exhibition {
         return isFavourited;
     }
 
-    public void setFavourited(boolean favourited) {
-        isFavourited = favourited;
+    public void setFavourited(boolean favourited) throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        int id =this.id;
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET is_favourited = ? WHERE id = ? ");
+                ps.setBoolean(1,favourited);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        this.isFavourited = favourited;
     }
 
     public String getDescription() {
