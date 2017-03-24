@@ -134,6 +134,51 @@ public class ExhibitionController {
         exhibitionRepository.findById(exhibitionId).setFavourited(false);
     }
 
+    //get fav ex
+    @RequestMapping(value="/favEx",method= RequestMethod.GET)
+    public @ResponseBody List<Exhibition> getFavExhibitions() {
+        List<Exhibition> listEx= new ArrayList<Exhibition>();
+        try {
+            String url = "jdbc:mysql://localhost:3306/bankza";
+            Connection conn = DriverManager.getConnection(url,"root","password");
+            Statement stmt = conn.createStatement();
+            ResultSet rs;
+
+
+            rs = stmt.executeQuery("SELECT * FROM exhibition WHERE is_favourited = TRUE "+" ORDER BY start_date ASC");
+            while ( rs.next() ) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                String location = rs.getString("location");
+                String category = rs.getString("category");
+                String startDate = rs.getString("start_date");
+                String endDate = rs.getString("end_date");
+                String posterUrl = rs.getString("poster_url");
+                boolean isFavourited = rs.getBoolean("is_favourited");
+                Double latitude = rs.getDouble("latitude");
+                Double longtitude = rs.getDouble("longtitude");
+                String agendaUrl = rs.getString("agenda_url");
+                String mapUrl = rs.getString("map_url");
+                boolean isPassed = rs.getBoolean("is_passed");
+
+                Exhibition exhibition = new Exhibition(id,name,description,location,category,startDate,endDate,posterUrl,isFavourited,latitude
+                        ,longtitude,agendaUrl,mapUrl,isPassed);
+
+                listEx.add(exhibition);
+            }
+            conn.close();
+        }
+        catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return listEx;
+
+
+    }
+
+
     //get booths
     @RequestMapping(value="/{exhibitionId}/booths ",method= RequestMethod.GET)
     public @ResponseBody List<Booth> getAllBooths(@PathVariable int exhibitionId){
@@ -433,8 +478,6 @@ public class ExhibitionController {
         }
 
     }
-
-
 }
 
 
