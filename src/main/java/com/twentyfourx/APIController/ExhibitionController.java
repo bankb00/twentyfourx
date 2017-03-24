@@ -74,17 +74,34 @@ public class ExhibitionController {
     }
 
 
-    @GetMapping(path="/add") // Map ONLY GET Requests
-    public @ResponseBody String addExhibition (@RequestParam String name) {
+    /*@GetMapping(path="/add") // Map ONLY GET Requests
+    public @ResponseBody String addExhibition () {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
-        //Exhibition exhibition = new Exhibition();
-        //exhibition.setExhibitionName(name);
-        //exhibitionRepository.save(exhibition);
+        Exhibition exhibition = new Exhibition();
+        exhibition.setExhibitionName(name);
+        exhibitionRepository.save(exhibition);
+
+        String  str = "INSERT INTO ticket (exhibition_id, start_date, end_date, holder_name, holder_role, is_expired, can_register)" +
+                "VALUES (1, '2017-2-5', '2017-2-7', 'bankbank', 'visitor', 0, 0)";
+
+        try {
+            String url = "jdbc:mysql://localhost:3306/bankza";
+            Connection conn = DriverManager.getConnection(url,"root","password");
+            Statement stmt = conn.createStatement();
+
+            stmt.executeUpdate(str);
+
+            conn.close();
+        }
+        catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
 
         return "Saved";
-    }
+    }*/
 
     //Pageable Exhibition
     @RequestMapping(value = "/", method = RequestMethod.GET)
