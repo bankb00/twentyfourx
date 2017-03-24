@@ -209,9 +209,36 @@ public class ExhibitionController {
             System.err.println(e.getMessage());
         }
         return listEx;
+
+
     }
 
+    @RequestMapping(value="/{exhibitionId}/register",method= RequestMethod.POST)
+    public @ResponseBody
+    void registerExhibition (@PathVariable int exhibitionId) {
 
+        int exhibition_id = exhibitionId;
+        int user_id = 1; //userid
+
+        String  str = "INSERT INTO ticket (exhibition_id, user_id, start_date, end_date, holder_name, holder_role, is_expired, can_register)" +
+                "VALUES ("+exhibition_id+","+user_id+", '2017-02-5', '2017-02-7', 'bankbank', 'visitor', 0, 0)";
+
+        try {
+            String url = "jdbc:mysql://localhost:3306/bankza";
+            Connection conn = DriverManager.getConnection(url,"root","password");
+            Statement stmt = conn.createStatement();
+
+            stmt.executeUpdate(str);
+
+            conn.close();
+        }
+        catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
+
+    }
 
 }
 
