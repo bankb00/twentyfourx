@@ -15,11 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -213,12 +208,17 @@ public class ExhibitionController {
 
     }
 
+
+    //Register with header for user
     @RequestMapping(value="/{exhibitionId}/register",method= RequestMethod.POST)
     public @ResponseBody
-    void registerExhibition (@PathVariable int exhibitionId) {
+    void registerExhibition (@RequestHeader(value="token") String tokenValue,@PathVariable int exhibitionId) {
 
         int exhibition_id = exhibitionId;
         int user_id = 1; //userid
+
+        String token = tokenValue;
+        System.out.println(token);
 
         String  str = "INSERT INTO ticket (exhibition_id, user_id, start_date, end_date, holder_name, holder_role, is_expired, can_register)" +
                 "VALUES ("+exhibition_id+","+user_id+", '2017-02-5', '2017-02-7', 'bankbank', 'visitor', 0, 0)";
@@ -236,8 +236,6 @@ public class ExhibitionController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
-
-
     }
 
 }
