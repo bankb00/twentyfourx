@@ -6,6 +6,7 @@ package com.twentyfourx.APIController;
 
 import com.twentyfourx.Entity.Booth;
 import com.twentyfourx.Entity.Exhibition;
+import com.twentyfourx.Entity.JSONObject;
 import com.twentyfourx.Repository.BoothRepository;
 import com.twentyfourx.Repository.ExhibitionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class ExhibitionController {
     private BoothContactRepository boothContactRepository;*/
 
     private List<String> categories = new ArrayList<>(Arrays.asList("Food", "Home & Decorate","Technology & Electronics Devices"
-            ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion"));
+            ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion","Others"));
 
 
     //@RequestMapping(value = "/getsize", method = RequestMethod.GET)
@@ -69,34 +70,6 @@ public class ExhibitionController {
     }
 
 
-    /*@GetMapping(path="/add") // Map ONLY GET Requests
-    public @ResponseBody String addExhibition () {
-        // @ResponseBody means the returned String is the response, not a view name
-        // @RequestParam means it is a parameter from the GET or POST request
-
-        Exhibition exhibition = new Exhibition();
-        exhibition.setExhibitionName(name);
-        exhibitionRepository.save(exhibition);
-
-        String  str = "INSERT INTO ticket (exhibition_id, start_date, end_date, holder_name, holder_role, is_expired, can_register)" +
-                "VALUES (1, '2017-2-5', '2017-2-7', 'bankbank', 'visitor', 0, 0)";
-
-        try {
-            String url = "jdbc:mysql://localhost:3306/bankza";
-            Connection conn = DriverManager.getConnection(url,"root","password");
-            Statement stmt = conn.createStatement();
-
-            stmt.executeUpdate(str);
-
-            conn.close();
-        }
-        catch (Exception e) {
-            System.err.println("Got an exception! ");
-            System.err.println(e.getMessage());
-        }
-
-        return "Saved";
-    }*/
 
     //Pageable Exhibition
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -273,45 +246,39 @@ public class ExhibitionController {
 
     }
 
-    //get data from body
-    /*@RequestMapping(value="/bank",method= RequestMethod.POST)
-    public void get(@RequestBody JsonO){
-        System.out.println(name);
 
-    }*/
-    /*@ResponseBody
-    @RequestMapping(value="/bank",method= RequestMethod.POST)
-    public void saveData(HttpServletRequest request
-                         ){
-        JSONObject myObject = new JSONObject(result);
-        String jsonString = request.getParameter("json");
-        //String jsonString = request.getAttribute("json");
-        System.out.println(jsonString);
-    }*/
+    //add exhibition
+    @ResponseBody
+    @RequestMapping(value="/add",method= RequestMethod.POST)
+    public void addExhibition(@RequestBody JSONObject jason) throws SQLException {
+        String name = jason.getName();
+        String description = jason.getDescription();
+        String location = jason.getLocation();
+        String category = jason.getCategory();
+        String startDate = jason.getStartDate();
+        String endDate = jason.getEndDate();
+        String posterUrl = jason.getPosterUrl();
+        Double latitude = jason.getLatitude();
+        if(latitude==null){
+            latitude = 13.764936;
+        }
+        Double longtitude = jason.getLongtitude();
+        if(longtitude==null){
+            longtitude = 100.538297;
+        }
+        String agendaUrl = jason.getAgendaUrl();
+        String mapUrl = jason.getMapUrl();
 
-
-    //Register with header for user
-    @RequestMapping(value="/{exhibitionId}/register",method= RequestMethod.POST)
-    public @ResponseBody
-    void registerExhibition (@RequestHeader(value="token") String tokenValue,@PathVariable int exhibitionId) {
-
-        int exhibition_id = exhibitionId;
-        int user_id = 1; //userid
-
-        String token = tokenValue;
-        System.out.println(token);
-
-        String  str = "INSERT INTO ticket (exhibition_id, user_id, start_date, end_date, holder_name, holder_role, is_expired, can_register)" +
-                "VALUES ("+exhibition_id+","+user_id+", '2017-02-5', '2017-02-7', 'bankbank', 'visitor', 0, 0)";
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url, "root", "password");
+        String str = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url)" +
+                "VALUES ('"+name+"','"+description+"', '"+location+"', '"+category+"', '"+startDate+"', '"+endDate+"', '"+posterUrl+"', '"+latitude+"', '"+longtitude+"', '"+agendaUrl+"', '"+mapUrl+"')";
 
         try {
-            String url = "jdbc:mysql://localhost:3306/bankza";
-            Connection conn = DriverManager.getConnection(url,"root","password");
             Statement stmt = conn.createStatement();
-
             stmt.executeUpdate(str);
-
             conn.close();
+
         }
         catch (Exception e) {
             System.err.println("Got an exception! ");
@@ -319,31 +286,31 @@ public class ExhibitionController {
         }
     }
 
-    //update ex
-    @RequestMapping(value="/{exhibitionId}/update",method = RequestMethod.POST)
+    //Update exhibiiton
     @ResponseBody
-    public void updateExhibition(@RequestParam(value = "name", required=false) final String newName
-    ,@RequestParam(value = "location", required=false) String location
-    ,@RequestParam(value = "category", required=false) String category
-    ,@RequestParam(value = "startDate", required=false) String startDate
-    ,@RequestParam(value = "endDate", required=false) String endDate
-    ,@RequestParam(value = "posterUrl", required=false) String posterUrl
-    ,@RequestParam(value = "description", required=false) String description
-    ,@RequestParam(value = "latitude", required=false) Double latitude
-    ,@RequestParam(value = "longtitude", required=false) Double longtitude
-    ,@RequestParam(value = "agendaUrl", required=false) String agendaUrl
-    ,@RequestParam(value = "mapUrl", required=false) String mapUrl
-    ,@PathVariable int exhibitionId) throws SQLException {
-
+    @RequestMapping(value="/{exhibitionId}/update",method= RequestMethod.POST)
+    public void saveData(@RequestBody JSONObject jason, @PathVariable int exhibitionId) throws SQLException {
         int id = exhibitionId;
+        String name = jason.getName();
+        String description = jason.getDescription();
+        String location = jason.getLocation();
+        String category = jason.getCategory();
+        String startDate = jason.getStartDate();
+        String endDate = jason.getEndDate();
+        String posterUrl = jason.getPosterUrl();
+        Double latitude = jason.getLatitude();
+        Double longtitude = jason.getLongtitude();
+        String agendaUrl = jason.getAgendaUrl();
+        String mapUrl = jason.getMapUrl();
+
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
-        if(newName!=null){
+        if(name!=null){
             try
             {
                 PreparedStatement ps = conn.prepareStatement(
                         "UPDATE exhibition SET name = ? WHERE id = ? ");
-                ps.setString(1,newName);
+                ps.setString(1,name);
                 ps.setInt(2,id);
                 ps.executeUpdate();
             }
@@ -492,8 +459,38 @@ public class ExhibitionController {
                 System.err.println(ex.getMessage());
             }
         }
-
     }
+
+
+    //Register with header for user
+    @RequestMapping(value="/{exhibitionId}/register",method= RequestMethod.POST)
+    public @ResponseBody
+    void registerExhibition (@RequestHeader(value="token") String tokenValue,@PathVariable int exhibitionId) {
+
+        int exhibition_id = exhibitionId;
+        int user_id = 1; //userid
+
+        String token = tokenValue;
+        System.out.println(token);
+
+        String  str = "INSERT INTO ticket (exhibition_id, user_id, start_date, end_date, holder_name, holder_role, is_expired, can_register)" +
+                "VALUES ("+exhibition_id+","+user_id+", '2017-02-5', '2017-02-7', 'bankbank', 'visitor', 0, 0)";
+
+        try {
+            String url = "jdbc:mysql://localhost:3306/bankza";
+            Connection conn = DriverManager.getConnection(url,"root","password");
+            Statement stmt = conn.createStatement();
+
+            stmt.executeUpdate(str);
+
+            conn.close();
+        }
+        catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+    }
+    
 }
 
 
