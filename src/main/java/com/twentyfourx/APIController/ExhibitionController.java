@@ -315,7 +315,7 @@ public class ExhibitionController {
     //Update exhibiiton
     @ResponseBody
     @RequestMapping(value="/{exhibitionId}/update",method= RequestMethod.POST)
-    public void saveData(@RequestBody JSONObject jason, @PathVariable int exhibitionId) throws SQLException {
+    public void saveData(@RequestBody ExhibitionObject jason, @PathVariable int exhibitionId) throws SQLException {
         int id = exhibitionId;
         String name = jason.getName();
         String description = jason.getDescription();
@@ -477,6 +477,106 @@ public class ExhibitionController {
                 PreparedStatement ps = conn.prepareStatement(
                         "UPDATE exhibition SET map_url = ? WHERE id = ? ");
                 ps.setString(1,mapUrl);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+    }
+
+    //Update booth
+    @ResponseBody
+    @RequestMapping(value="/{exhibiitonId}/booths/{boothId}/update",method= RequestMethod.POST)
+    public void updateBooth(@RequestBody BoothObject jason, @PathVariable int boothId) throws SQLException {
+        int id = boothId;
+        String name = jason.getName();
+        String boothCode = jason.getBoothCode();
+        String description = jason.getDescription();
+        int exhibitionId = jason.getExhibitionId();
+        String logoUrl = jason.getLogoUrl();
+        String brochureUrl = jason.getBrochureUrl();
+
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        if(name!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth SET name = ? WHERE id = ? ");
+                ps.setString(1,name);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(boothCode!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth SET booth_code = ? WHERE id = ? ");
+                ps.setString(1,boothCode);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(description!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth SET description = ? WHERE id = ? ");
+                ps.setString(1,description);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(exhibitionId!=0){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth SET exhibition_id = ? WHERE id = ? ");
+                ps.setInt(1,exhibitionId);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(logoUrl!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth SET logo_url = ? WHERE id = ? ");
+                ps.setString(1,logoUrl);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(brochureUrl!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth SET brochure_url = ? WHERE id = ? ");
+                ps.setString(1,brochureUrl);
                 ps.setInt(2,id);
                 ps.executeUpdate();
             }
