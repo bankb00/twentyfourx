@@ -4,9 +4,7 @@ package com.twentyfourx.APIController;
  * Created by Thanawat on 3/11/2017.
  */
 
-import com.twentyfourx.Entity.Booth;
-import com.twentyfourx.Entity.Exhibition;
-import com.twentyfourx.Entity.JSONObject;
+import com.twentyfourx.Entity.*;
 import com.twentyfourx.Repository.BoothRepository;
 import com.twentyfourx.Repository.ExhibitionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -250,7 +248,7 @@ public class ExhibitionController {
     //add exhibition
     @ResponseBody
     @RequestMapping(value="/add",method= RequestMethod.POST)
-    public void addExhibition(@RequestBody JSONObject jason) throws SQLException {
+    public void addExhibition(@RequestBody ExhibitionObject jason) throws SQLException {
         String name = jason.getName();
         String description = jason.getDescription();
         String location = jason.getLocation();
@@ -273,6 +271,34 @@ public class ExhibitionController {
         Connection conn = DriverManager.getConnection(url, "root", "password");
         String str = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url)" +
                 "VALUES ('"+name+"','"+description+"', '"+location+"', '"+category+"', '"+startDate+"', '"+endDate+"', '"+posterUrl+"', '"+latitude+"', '"+longtitude+"', '"+agendaUrl+"', '"+mapUrl+"')";
+
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(str);
+            conn.close();
+
+        }
+        catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+    }
+
+    //add booth
+    @ResponseBody
+    @RequestMapping(value="/{exId}/add",method= RequestMethod.POST)
+    public void addBooth(@RequestBody BoothObject jason, @PathVariable int exId) throws SQLException {
+        String name = jason.getName();
+        String boothCode = jason.getBoothCode();
+        String description = jason.getDescription();
+        int exhibitionId = exId;
+        String logoUrl = jason.getLogoUrl();
+        String brochureUrl = jason.getBrochureUrl();
+
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url, "root", "password");
+        String str = "INSERT INTO booth (name, booth_code, description, exhibition_id, logo_url, brochure_url)" +
+                "VALUES ('"+name+"', '"+boothCode+"', '"+description+"', '"+exhibitionId+"', '"+logoUrl+"', '"+brochureUrl+"')";
 
         try {
             Statement stmt = conn.createStatement();
@@ -490,7 +516,7 @@ public class ExhibitionController {
             System.err.println(e.getMessage());
         }
     }
-    
+
 }
 
 
