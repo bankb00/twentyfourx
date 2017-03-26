@@ -13,6 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,15 +98,29 @@ public class ExhibitionController {
     //save Exhibition fav
     @RequestMapping(value = "/{exhibitionId}/saveFavourited", method=RequestMethod.GET)
     @ResponseBody
-    public void saveFavExhi(@PathVariable int exhibitionId) throws SQLException {
-        exhibitionRepository.findById(exhibitionId).setFavourited(true);
+    public boolean saveFavExhi(@RequestHeader(value="token") String tokenValue, @PathVariable int exhibitionId) throws SQLException, Exception {
+        if(checkToken(tokenValue)==true){
+            exhibitionRepository.findById(exhibitionId).setFavourited(true);
+            return true;
+        }
+        else {
+            System.out.println("UnValid");
+            return false;
+        }
     }
 
     //UnFav Exhibition fav
     @ResponseBody
     @RequestMapping(value = "/{exhibitionId}/unFavourited", method=RequestMethod.GET)
-    public void unFavExhi(@PathVariable int exhibitionId) throws SQLException {
-        exhibitionRepository.findById(exhibitionId).setFavourited(false);
+    public boolean unFavExhi(@RequestHeader(value="token") String tokenValue,@PathVariable int exhibitionId) throws SQLException, Exception {
+        if(checkToken(tokenValue)==true){
+            exhibitionRepository.findById(exhibitionId).setFavourited(false);
+            return true;
+        }
+        else {
+            System.out.println("UnValid");
+            return false;
+        }
     }
 
     //get fav ex
@@ -617,6 +635,57 @@ public class ExhibitionController {
         }
     }
 
+    public boolean checkToken(String token) throws  Exception{
+        String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0";
+        //String userToken = "EAADnEZCfV0nwBAO4HYFGrnJdjIrlVV66whWgKe80UUCZCsH15B4sM55Ob3dH3ThwMv3BsZC6635c3LYPdbx9yIX3ooXmZBDa5ZBW0X9ZA0mqCWQsc36XYZBpG2uUWYa20U96ns8zvOJGIjGZBM7msrGocMQKoMjauK8I0kj0C9hCnObl22tUz4xSIuZBSfaE9k3gZD";
+        String userToken = token;
+        String url = "https://graph.facebook.com/debug_token?input_token="+userToken+"&access_token=254072948380284|53koftZWubLWVXH3nzUZyFbboVw";
+            //"http://www.google.com/search?q=mkyong";
+            //"https://graph.facebook.com/oauth/access_token?client_id=254072948380284&client_secret=d82a08cc6c73d5948212516c12671e42&grant_type=client_credentials";
+
+        boolean isValid = false;
+
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            // optional default is GET
+        con.setRequestMethod("GET");
+
+            //add request header
+        con.setRequestProperty("User-Agent", USER_AGENT);
+
+        int responseCode = con.getResponseCode();
+        //System.out.println("\nSending 'GET' request to URL : " + url);
+        //System.out.println("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+            sb.append(inputLine+"\n");
+                //////////////////////////////////////////
+            String sentence = inputLine;
+            String search  = "true";
+
+            if ( sentence.toLowerCase().indexOf(search.toLowerCase()) != -1&&responseCode==200 ) {
+
+                isValid = true;
+            }
+                /////////////////////////////////////////
+        }
+        String str =sb.toString();
+        in.close();
+
+            //print result
+        //System.out.println(isValid);
+            //return str;
+        return isValid;
+
+    }
 }
 
 

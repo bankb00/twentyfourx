@@ -3,6 +3,7 @@ package com.twentyfourx.APIController;
 /**
  * Created by Thanawat on 3/25/2017.
  */
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,11 +36,14 @@ public class HttpRequest {
     }
 
     // HTTP GET request
-    private void sendGet() throws Exception {
+    private Boolean sendGet() throws Exception {
+        String userToken = "EAADnEZCfV0nwBAO4HYFGrnJdjIrlVV66whWgKe80UUCZCsH15B4sM55Ob3dH3ThwMv3BsZC6635c3LYPdbx9yIX3ooXmZBDa5ZBW0X9ZA0mqCWQsc36XYZBpG2uUWYa20U96ns8zvOJGIjGZBM7msrGocMQKoMjauK8I0kj0C9hCnObl22tUz4xSIuZBSfaE9k3gZD";
 
-        String url = "https://graph.facebook.com/debug_token?input_token=DnEZCfV0nwBAKbEfZAaA1bNpNB69ZAU5TvqLwWSFcR6ZCqnG4nl0xRUQY4gxoOtNJ5k8JlfZCgaQ18TSWFltHlg9WvJE2ZBRVQ44jbmqL8CltRkUcWK1AItkZBFIrD1b3aoVzgMxKTfQcOSn6vAAIkvirZAIBITohnGcAcu4rNxhGxQcGeft9W&access_token=254072948380284|53koftZWubLWVXH3nzUZyFbboVw";
+        String url = "https://graph.facebook.com/debug_token?input_token="+userToken+"&access_token=254072948380284|53koftZWubLWVXH3nzUZyFbboVw";
                 //"http://www.google.com/search?q=mkyong";
                 //"https://graph.facebook.com/oauth/access_token?client_id=254072948380284&client_secret=d82a08cc6c73d5948212516c12671e42&grant_type=client_credentials";
+
+        boolean isValid = false;
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -58,15 +62,28 @@ public class HttpRequest {
                 new InputStreamReader(con.getInputStream()));
         String inputLine;
         StringBuffer response = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         while ((inputLine = in.readLine()) != null) {
             response.append(inputLine);
+            sb.append(inputLine+"\n");
+            //////////////////////////////////////////
+            String sentence = inputLine;
+            String search  = "true";
+
+            if ( sentence.toLowerCase().indexOf(search.toLowerCase()) != -1&&responseCode==200 ) {
+
+                isValid = true;
+            }
+            /////////////////////////////////////////
         }
+        String str =sb.toString();
         in.close();
 
         //print result
-        System.out.println(response.toString());
-
+        System.out.println(isValid);
+        //return str;
+        return isValid;
     }
 
     // HTTP POST request
