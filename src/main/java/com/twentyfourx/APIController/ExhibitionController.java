@@ -163,14 +163,6 @@ public class ExhibitionController {
             return true;
 
         }
-        /*if(checkToken(tokenValue)==true){
-            exhibitionRepository.findById(exhibitionId).setFavourited(true);
-            return true;
-        }
-        else {
-            System.out.println("UnValid");
-            return false;
-        }*/
         else {
             return false;
         }
@@ -180,14 +172,65 @@ public class ExhibitionController {
     @ResponseBody
     @RequestMapping(value = "/{exhibitionId}/unFavourited", method=RequestMethod.GET)
     public boolean unFavExhi(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id,@PathVariable int exhibitionId) throws SQLException, Exception {
-        if(checkToken(tokenValue)==true){
+
+        int id = 0;
+        String userId = user_id;
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+
+        if(checkToken(tokenValue)==true) {
+            //check user is created?
+            try {
+
+                rs = stmt.executeQuery("SELECT * FROM user ");
+                while (rs.next()) {
+                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
+                        id = rs.getInt("id");
+                    }
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+            //id not then create
+            if (id == 0) {
+                return false;
+            }
+
+            if(id!=0){
+                System.out.println("Create at user_and_exhibition");
+                System.out.println(id);
+                String str = "DELETE FROM user_and_exhibition WHERE user_id = "+id+" AND exhibition_id = "+exhibitionId+"";
+
+                try {
+                    stmt.executeUpdate(str);
+                    conn.close();
+
+                } catch (Exception e) {
+                    System.err.println("Got an exception! ");
+                    System.err.println(e.getMessage());
+                }
+            }
+            return true;
+
+        }
+        else {
+            return false;
+        }
+
+
+        /*if(checkToken(tokenValue)==true){
             exhibitionRepository.findById(exhibitionId).setFavourited(false);
             return true;
         }
         else {
             System.out.println("UnValid");
             return false;
-        }
+        }*/
     }
 
 
@@ -287,9 +330,9 @@ public class ExhibitionController {
     }
 
     //Filter By category
-    @RequestMapping(value="/cate",method = RequestMethod.GET)
+    @RequestMapping(value="/category/{category}",method = RequestMethod.GET)
     @ResponseBody
-    public List<Exhibition> filterByCategory(@RequestParam String category){
+    public List<Exhibition> filterByCategory(@PathVariable String category){
         return exhibitionRepository.findByCategory(category);
     }
 
