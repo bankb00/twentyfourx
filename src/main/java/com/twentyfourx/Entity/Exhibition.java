@@ -81,11 +81,11 @@ public class Exhibition {
         this.id = id;
     }
 
-    public String getExhibitionName() {
+    public String getName() {
         return name;
     }
 
-    public void setExhibitionName(String exhibitionName) {
+    public void setName(String exhibitionName) {
         this.name = exhibitionName;
     }
 
