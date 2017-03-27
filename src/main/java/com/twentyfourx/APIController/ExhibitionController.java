@@ -442,12 +442,23 @@ public class ExhibitionController {
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url, "root", "password");
-        String str = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url)" +
-                "VALUES ('"+name+"','"+description+"', '"+location+"', '"+category+"', '"+startDate+"', '"+endDate+"', '"+posterUrl+"', '"+latitude+"', '"+longtitude+"', '"+agendaUrl+"', '"+mapUrl+"')";
+        String insertEx = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url)" +
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
         try {
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(str);
+            PreparedStatement ps = conn.prepareStatement(insertEx);
+            ps.setString(1,name);
+            ps.setString(2,description);
+            ps.setString(3,location);
+            ps.setString(4,category);
+            ps.setString(5,startDate);
+            ps.setString(6,endDate);
+            ps.setString(7,posterUrl);
+            ps.setDouble(8,latitude);
+            ps.setDouble(9,longtitude);
+            ps.setString(10,agendaUrl);
+            ps.setString(11,mapUrl);
+            ps.executeUpdate();
             conn.close();
 
         }
