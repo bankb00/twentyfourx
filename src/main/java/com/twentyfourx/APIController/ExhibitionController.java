@@ -4,7 +4,10 @@ package com.twentyfourx.APIController;
  * Created by Thanawat on 3/11/2017.
  */
 
-import com.twentyfourx.Entity.*;
+import com.twentyfourx.Entity.Booth;
+import com.twentyfourx.Entity.BoothObject;
+import com.twentyfourx.Entity.Exhibition;
+import com.twentyfourx.Entity.ExhibitionObject;
 import com.twentyfourx.Repository.BoothRepository;
 import com.twentyfourx.Repository.ExhibitionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -871,6 +874,63 @@ public class ExhibitionController {
             System.err.println(e.getMessage());
         }
         return id;
+    }
+
+    @RequestMapping(value = "/search", method=RequestMethod.GET)
+    public @ResponseBody List<Exhibition> search(@RequestParam("text") String text) throws SQLException {
+        String search = text;
+        List<Integer> listExId = new ArrayList<Integer>();
+        List<Exhibition> listEx = new ArrayList<Exhibition>();
+
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+        try {
+            rs = stmt.executeQuery("SELECT * FROM exhibition ");
+            while (rs.next()) {
+                //if (search.equalsIgnoreCase(rs.getString("name"))) {
+                if (rs.getString("name").toLowerCase().indexOf(search.toLowerCase())!=-1) {
+                    System.out.println("1");
+                    listExId.add(rs.getInt("id"));
+                }
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
+        // i มันไม่ใช่
+        for(int i = 0 ; i<listExId.size() ; i++){
+            int exId = listExId.get(i);
+            rs = stmt.executeQuery("SELECT * FROM exhibition WHERE id = "+exId+"");
+            while(rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                String location = rs.getString("location");
+                String category = rs.getString("category");
+                String startDate = rs.getString("start_date");
+                String endDate = rs.getString("end_date");
+                String posterUrl = rs.getString("poster_url");
+                boolean isFavourited = rs.getBoolean("is_favourited");
+                Double latitude = rs.getDouble("latitude");
+                Double longtitude = rs.getDouble("longtitude");
+                String agendaUrl = rs.getString("agenda_url");
+                String mapUrl = rs.getString("map_url");
+                boolean isPassed = rs.getBoolean("is_passed");
+
+                Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
+                        , longtitude, agendaUrl, mapUrl, isPassed);
+
+                listEx.add(exhibition);
+            }
+
+        }
+
+        return listEx;
+
     }
 }
 
