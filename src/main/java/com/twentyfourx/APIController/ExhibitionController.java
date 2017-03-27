@@ -459,7 +459,7 @@ public class ExhibitionController {
 
     //add booth
     @ResponseBody
-    @RequestMapping(value="/{exId}/add",method= RequestMethod.POST)
+    @RequestMapping(value="/{exId}/booths/add",method= RequestMethod.POST)
     public void addBooth(@RequestBody BoothObject jason, @PathVariable int exId) throws SQLException {
         String name = jason.getName();
         String boothCode = jason.getBoothCode();
@@ -470,12 +470,24 @@ public class ExhibitionController {
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url, "root", "password");
-        String str = "INSERT INTO booth (name, booth_code, description, exhibition_id, logo_url, brochure_url)" +
-                "VALUES ('"+name+"', '"+boothCode+"', '"+description+"', '"+exhibitionId+"', '"+logoUrl+"', '"+brochureUrl+"')";
+        /*String str = "INSERT INTO booth (name, booth_code, description, exhibition_id, logo_url, brochure_url)" +
+                "VALUES ('"+name+"', '"+boothCode+"', '"+description+"', '"+exhibitionId+"', '"+logoUrl+"', '"+brochureUrl+"')";*/
+
+        String insertBooth = "INSERT INTO booth"
+                + "(name, booth_code, description, exhibition_id, logo_url, brochure_url) VALUES"
+                + "(?,?,?,?,?,?)";
 
         try {
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(str);
+            /*Statement stmt = conn.createStatement();
+            stmt.executeUpdate(str);*/
+            PreparedStatement ps = conn.prepareStatement(insertBooth);
+            ps.setString(1,name);
+            ps.setString(2,boothCode);
+            ps.setString(3,description);
+            ps.setInt(4,exhibitionId);
+            ps.setString(5,logoUrl);
+            ps.setString(6,brochureUrl);
+            ps.executeUpdate();
             conn.close();
 
         }
@@ -876,8 +888,10 @@ public class ExhibitionController {
         return id;
     }
 
+
+    //search exhibition by name
     @RequestMapping(value = "/search", method=RequestMethod.GET)
-    public @ResponseBody List<Exhibition> search(@RequestParam("text") String text) throws SQLException {
+    public @ResponseBody List<Exhibition> search(@RequestParam("key") String text) throws SQLException {
         String search = text;
         List<Integer> listExId = new ArrayList<Integer>();
         List<Exhibition> listEx = new ArrayList<Exhibition>();
