@@ -784,7 +784,7 @@ public class ExhibitionController {
     }
 
 
-    //Register with header for user
+    //Register with header for user    Not complete
     @RequestMapping(value="/{exhibitionId}/register",method= RequestMethod.POST)
     public @ResponseBody
     void registerExhibition (@RequestHeader(value="token") String tokenValue,@PathVariable int exhibitionId) {

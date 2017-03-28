@@ -11,12 +11,37 @@ import javax.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    private int ticketRepo;
-    private int favBoothId;
-    private int briefCaseId;
+    private String email;
+    private String password;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    private String userId;
 
     public int getId() {
         return id;
@@ -28,29 +53,5 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getFavBoothId() {
-        return favBoothId;
-    }
-
-    public void setFavBoothId(int favBoothId) {
-        this.favBoothId = favBoothId;
-    }
-
-    public int getBriefCaseId() {
-        return briefCaseId;
-    }
-
-    public void setBriefCaseId(int briefCaseId) {
-        this.briefCaseId = briefCaseId;
-    }
-
-    public int getTicketRepo() {
-        return ticketRepo;
-    }
-
-    public void setTicketRepo(int ticketRepo) {
-        this.ticketRepo = ticketRepo;
     }
 }

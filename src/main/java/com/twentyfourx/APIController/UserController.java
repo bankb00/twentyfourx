@@ -1,10 +1,7 @@
 package com.twentyfourx.APIController;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,11 +14,11 @@ import java.sql.*;
  */
 @RestController //Test
 @Controller    // This means that this class is a Controller
-@RequestMapping(path="/user") // This means URL's start with /demo (after Application path)
+@RequestMapping(path="/users") // This means URL's start with /demo (after Application path)
 public class UserController {
 
 
-    @RequestMapping(value="/add",method= RequestMethod.GET)
+    /*@RequestMapping(value="/add",method= RequestMethod.GET)
     public boolean addUser(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id) throws Exception {
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
@@ -30,45 +27,111 @@ public class UserController {
         int id = 0;
         String userId = user_id;
 
-        if(checkToken(tokenValue)==true) {
 
             //check user is created?
-            try {
+        try {
 
-                rs = stmt.executeQuery("SELECT * FROM user ");
-                while (rs.next()) {
-                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
-                        id = rs.getInt("id");
-                        return false;
-                    }
+            rs = stmt.executeQuery("SELECT * FROM user ");
+            while (rs.next()) {
+                if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
+                    id = rs.getInt("id");
+                    return false;
                 }
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
+        //id not then create
+        if (id == 0) {
+            String str = "INSERT INTO user (user_id)" +
+                    "VALUES ('" + userId + "')";
+
+            try {
+                stmt.executeUpdate(str);
+                return true;
                 //conn.close();
             } catch (Exception e) {
                 System.err.println("Got an exception! ");
                 System.err.println(e.getMessage());
             }
 
-            //id not then create
-            if (id == 0) {
-                String str = "INSERT INTO user (user_id)" +
-                        "VALUES ('" + userId + "')";
-
-                try {
-                    stmt.executeUpdate(str);
-                    return true;
-                    //conn.close();
-
-                } catch (Exception e) {
-                    System.err.println("Got an exception! ");
-                    System.err.println(e.getMessage());
-                }
-
-            }
         }
 
 
-
         return false;
+
+    }*/
+
+    @RequestMapping(value="/login",method= RequestMethod.GET)
+    public @ResponseBody LoginObject userLogin(@RequestHeader(value="access_token") String tokenValue, @RequestHeader(value="user_id") String user_id) throws Exception {
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+        LoginObject login = new LoginObject(false,false);
+        int id = 0;
+        String userId = user_id;
+
+
+        //check user is created?
+        try {
+
+            rs = stmt.executeQuery("SELECT * FROM user ");
+            while (rs.next()) {
+                if (userId.equalsIgnoreCase(rs.getString("user_id"))) {
+                    id = rs.getInt("id");
+                    login.setLoginSuccess(true);
+                }
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
+        //id not then create
+        if (id == 0) {
+            return login;
+        }
+        else {
+            login.setIsRegister(true);
+            return login;
+        }
+    }
+
+    @RequestMapping(value="/register",method= RequestMethod.POST)
+    public @ResponseBody void userRegister(@RequestHeader(value="access_token") String tokenValue, @RequestHeader(value="user_id") String user_id, @RequestBody UserObject user) throws Exception {
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+        String name = user.getName();
+        String email = user.getEmail();
+        String password = user.getPassword();
+        String userId = user_id;
+
+
+
+        String insertEx = "INSERT INTO user (name, user_id, email, password)" +
+                "VALUES (?,?,?,?)";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(insertEx);
+            ps.setString(1,name);
+            ps.setString(2,userId);
+            ps.setString(3,email);
+            ps.setString(4,password);
+            ps.executeUpdate();
+            conn.close();
+
+        }
+        catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
 
     }
 
