@@ -10,6 +10,7 @@ import com.twentyfourx.Entity.Exhibition;
 import com.twentyfourx.Entity.ExhibitionObject;
 import com.twentyfourx.Repository.BoothRepository;
 import com.twentyfourx.Repository.ExhibitionRepository;
+import com.twentyfourx.Repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,9 @@ public class ExhibitionController {
     private ExhibitionRepository exhibitionRepository;
     @Autowired
     private BoothRepository boothRepository;
+
+    @Autowired
+    private TicketRepository ticketRepository;
     /*@Autowired
     private BoothContactRepository boothContactRepository;*/
 
@@ -320,6 +324,186 @@ public class ExhibitionController {
             return listEx;
         }
 
+    }
+
+    //register and get ticket
+    @RequestMapping(value = "/{exhibitionId}/register", method=RequestMethod.GET)
+    @ResponseBody
+    public String getTicket(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id, @PathVariable int exhibitionId) throws SQLException, Exception {
+        int id = 0;
+        String userId = user_id;
+        String userName = null;
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+        ResultSet abc;
+        List<Integer> listOfTicketId = new ArrayList<Integer>();
+        int ticketId = 0;
+
+        //exhibitiondetail
+        String exhibitionName = exhibitionRepository.findById(exhibitionId).getName();
+        String startDate = exhibitionRepository.findById(exhibitionId).getStartDate();
+        String endDate = exhibitionRepository.findById(exhibitionId).getEndDate();
+
+
+        if(checkToken(tokenValue)==true) {
+                                                //check ticket is created?
+            //get userid
+            try {
+                //get user id;
+                rs = stmt.executeQuery("SELECT * FROM user ");
+                while (rs.next()) {
+                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
+                        id = rs.getInt("id");
+                        userName = rs.getString("name");
+
+                    }
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+            //get list of ticket id
+            try {
+                //get user id;
+                rs = stmt.executeQuery("SELECT * FROM user_and_ticket");
+                System.out.println("check check");
+                //ถ้ายังไม่มี สร้างตั๋วมาใหม่
+                if(rs.next()==false){
+                    System.out.println("Test noi di");
+                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id)" +
+                            "VALUES (?,?,?,?,?,?)";
+
+                    try {
+                        PreparedStatement ps = conn.prepareStatement(insertTicket,Statement.RETURN_GENERATED_KEYS);
+                        ps.setString(1,exhibitionName);
+                        ps.setString(2,userId);
+                        ps.setString(3,startDate);
+                        ps.setString(4,endDate);
+                        ps.setString(5,userName);
+                        ps.setInt(6,exhibitionId);
+                        ps.executeUpdate();
+                        ResultSet rsd = ps.getGeneratedKeys();
+                        if ( rsd.next() ) {
+                            ticketId = rsd.getInt(1);
+                            System.out.println("tick Id"+ticketId);
+                        }
+                        //conn.close();
+
+                    }
+                    catch (Exception e) {
+                        System.err.println("Got an exception! ");
+                        System.err.println(e.getMessage());
+                    }
+
+
+                    //add to user and ticket
+                    String insertUserAndTicket = "INSERT INTO user_and_ticket (user_id, ticket_id)" +
+                            "VALUES (?,?)";
+
+                    try {
+                        PreparedStatement ps = conn.prepareStatement(insertUserAndTicket);
+                        ps.setInt(1,id);
+                        ps.setInt(2,ticketId);
+
+                        ps.executeUpdate();
+                        //conn.close();
+
+                    }
+                    catch (Exception e) {
+                        System.err.println("Got an exception! ");
+                        System.err.println(e.getMessage());
+                    }
+
+
+                }
+                //ถ้ามีในตาราง user ticket แล้ว ต้องเชคว่าที่มีอะ ใช่ที่สมัครไปยัง
+                else{
+                    System.out.println("check check2");
+                    rs = stmt.executeQuery("SELECT * FROM user_and_ticket");
+                    while (rs.next()) {
+                        System.out.println("while loop for add list id");
+                        if (id==rs.getInt("user_id")) {
+                            listOfTicketId.add(rs.getInt("ticket_id"));
+                        }
+                    }
+
+                    //เอาลิสของ id ตั๋ว ที่มีมาเชค
+                    for(int k = 0 ; k < listOfTicketId.size() ; k++){
+                       int tickId = listOfTicketId.get(k);
+
+                        rs = stmt.executeQuery("SELECT * FROM ticket WHERE  id = "+tickId+"");
+                        while(rs.next()){
+                            //ถ้าลงทะเบียนไปแล้ว
+                            if(rs.getInt("exhibition_id")==exhibitionId){
+                                ticketId = rs.getInt("id");
+                                return "Already register"+ticketId;
+                            }
+                        }
+                    }
+                    //ถ้า user ยังไม่มีตั๋วของงานนี้ สร้างใหม่
+                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id)" +
+                            "VALUES (?,?,?,?,?,?)";
+
+                    try {
+                        PreparedStatement ps = conn.prepareStatement(insertTicket,Statement.RETURN_GENERATED_KEYS);
+                        ps.setString(1,exhibitionName);
+                        ps.setString(2,userId);
+                        ps.setString(3,startDate);
+                        ps.setString(4,endDate);
+                        ps.setString(5,userName);
+                        ps.setInt(6,exhibitionId);
+                        ps.executeUpdate();
+                        ResultSet rsd = ps.getGeneratedKeys();
+                        if ( rsd.next() ) {
+                            ticketId = rsd.getInt(1);
+                            System.out.println("tick Id"+ticketId);
+                        }
+                        //conn.close();
+
+                    }
+                    catch (Exception e) {
+                        System.err.println("Got an exception! ");
+                        System.err.println(e.getMessage());
+                    }
+
+
+                    //add to user and ticket
+                    String insertUserAndTicket = "INSERT INTO user_and_ticket (user_id, ticket_id)" +
+                            "VALUES (?,?)";
+
+                    try {
+                        PreparedStatement ps = conn.prepareStatement(insertUserAndTicket);
+                        ps.setInt(1,id);
+                        ps.setInt(2,ticketId);
+
+                        ps.executeUpdate();
+                        //conn.close();
+
+                    }
+                    catch (Exception e) {
+                        System.err.println("Got an exception! ");
+                        System.err.println(e.getMessage());
+                    }
+
+                    return "registered"+ticketId;
+
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+            return "Can not Register";
+
+        }
+        else {
+            return "Can not Register";
+        }
     }
 
 

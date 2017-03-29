@@ -6,7 +6,15 @@ package com.twentyfourx.APIController;
 public class UserObject {
     private String name;
     private String email;
+    private String mobileNo;
     private String password;
+
+    public UserObject(String name, String email, String mobileNo, String password) {
+        this.name = name;
+        this.email = email;
+        this.mobileNo = mobileNo;
+        this.password = password;
+    }
 
     public UserObject() {
     }
@@ -36,4 +44,11 @@ public class UserObject {
     }
 
 
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
 }

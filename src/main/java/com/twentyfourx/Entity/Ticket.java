@@ -9,30 +9,92 @@ import javax.persistence.*;
 @Table(name = "Ticket")
 public class Ticket {
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getExhibitionId() {
+        return exhibitionId;
+    }
+
+    public void setExhibitionId(int exhibitionId) {
+        this.exhibitionId = exhibitionId;
+    }
+
+    public String getExhibitionName() {
+        return exhibitionName;
+    }
+
+    public void setExhibitionName(String exhibitionName) {
+        this.exhibitionName = exhibitionName;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getHolderName() {
+        return holderName;
+    }
+
+    public void setHolderName(String holderName) {
+        this.holderName = holderName;
+    }
+
+    public String getHolderRole() {
+        return holderRole;
+    }
+
+    public void setHolderRole(String holderRole) {
+        this.holderRole = holderRole;
+    }
+
+    public boolean isExpired() {
+        return isExpired;
+    }
+
+    public void setExpired(boolean expired) {
+        isExpired = expired;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int exhibitionId;
+    private String exhibitionName;
+    private String userId;
     private String startDate;
     private String endDate;
     private String holderName;
     private String holderRole;
     private boolean isExpired;
-    private boolean canRegister;
-
-    public Ticket(int exhibitionId, String holderName, String holderRole){
-        this.exhibitionId = exhibitionId;
-        this.holderName = holderName;
-        this.holderRole = holderRole;
-    }
 
     public Ticket(){
-        this.exhibitionId = 0;
-        this.startDate = "";
-        this.endDate = "";
-        this.holderName = "";
-        this.holderRole = "";
-        this.isExpired = false;
-        this.canRegister = false;
+
     }
+
 }

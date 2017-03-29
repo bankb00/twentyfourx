@@ -1,5 +1,7 @@
 package com.twentyfourx.APIController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,16 +76,30 @@ public class UserController {
         LoginObject login = new LoginObject(false,false);
         int id = 0;
         String userId = user_id;
+        String name;
+        String email;
+        String mobileNo;
+        String password;
 
+        //ObjectMapper mapper = new ObjectMapper();
+        //String jsonInString = null;
 
         //check user is created?
         try {
-
             rs = stmt.executeQuery("SELECT * FROM user ");
             while (rs.next()) {
                 if (userId.equalsIgnoreCase(rs.getString("user_id"))) {
                     id = rs.getInt("id");
+                    name = rs.getString("name");
+                    email = rs.getString("email");
+                    mobileNo = rs.getString("mobile_no");
+                    password = rs.getString("password");
                     login.setLoginSuccess(true);
+
+                    UserObject user = new UserObject(name,email,mobileNo,password);
+                    //String jsonInString = mapper.writeValueAsString(user);
+                    login.setUser(user);
+                     //jsonInString = mapper.writeValueAsString(user);
                 }
             }
             //conn.close();
@@ -98,6 +114,9 @@ public class UserController {
         }
         else {
             login.setIsRegister(true);
+
+            //UserObject user =mapper.readValue(jsonInString, UserObject.class);
+
             return login;
         }
     }
@@ -110,20 +129,22 @@ public class UserController {
         ResultSet rs;
         String name = user.getName();
         String email = user.getEmail();
+        String mobileNo = user.getMobileNo();
         String password = user.getPassword();
         String userId = user_id;
 
 
 
-        String insertEx = "INSERT INTO user (name, user_id, email, password)" +
-                "VALUES (?,?,?,?)";
+        String insertEx = "INSERT INTO user (name, user_id, email, mobile_no, password)" +
+                "VALUES (?,?,?,?,?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(insertEx);
             ps.setString(1,name);
             ps.setString(2,userId);
             ps.setString(3,email);
-            ps.setString(4,password);
+            ps.setString(4,mobileNo);
+            ps.setString(5,password);
             ps.executeUpdate();
             conn.close();
 
@@ -186,4 +207,15 @@ public class UserController {
         return isValid;
 
     }
+
+    @RequestMapping(value="/testest",method= RequestMethod.GET)
+    public String eiei() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        UserObject user = new UserObject("bankza","bankstch@gmail.com","156165156","15611651");
+
+        //Object to JSON in String
+        String jsonInString = mapper.writeValueAsString(user);
+        return jsonInString;
+    }
+
 }

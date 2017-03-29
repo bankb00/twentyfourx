@@ -10,4 +10,5 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface TicketRepository extends CrudRepository<Exhibition, Integer>, JpaRepository<Exhibition, Integer> {
     void save(Ticket ticket);
+    Ticket findById(int id);
 }
