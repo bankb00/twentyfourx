@@ -7,13 +7,32 @@ public class UserObject {
     private String name;
     private String email;
     private String mobileNo;
-    private String password;
+    private String userId;
+    private String accessToken;
 
-    public UserObject(String name, String email, String mobileNo, String password) {
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public UserObject(String name, String email, String mobileNo, String userId, String accessToken) {
         this.name = name;
         this.email = email;
         this.mobileNo = mobileNo;
-        this.password = password;
+        this.userId = userId;
+        this.accessToken = accessToken;
+
     }
 
     public UserObject() {
@@ -34,15 +53,6 @@ public class UserObject {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
 
     public String getMobileNo() {
         return mobileNo;

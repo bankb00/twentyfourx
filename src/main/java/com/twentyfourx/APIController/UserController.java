@@ -1,7 +1,5 @@
 package com.twentyfourx.APIController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,7 +77,7 @@ public class UserController {
         String name;
         String email;
         String mobileNo;
-        String password;
+
 
         //ObjectMapper mapper = new ObjectMapper();
         //String jsonInString = null;
@@ -93,10 +91,10 @@ public class UserController {
                     name = rs.getString("name");
                     email = rs.getString("email");
                     mobileNo = rs.getString("mobile_no");
-                    password = rs.getString("password");
+
                     login.setLoginSuccess(true);
 
-                    UserObject user = new UserObject(name,email,mobileNo,password);
+                    UserObject user = new UserObject(name,email,mobileNo,tokenValue,userId);
                     //String jsonInString = mapper.writeValueAsString(user);
                     login.setUser(user);
                      //jsonInString = mapper.writeValueAsString(user);
@@ -130,13 +128,12 @@ public class UserController {
         String name = user.getName();
         String email = user.getEmail();
         String mobileNo = user.getMobileNo();
-        String password = user.getPassword();
         String userId = user_id;
 
 
 
-        String insertEx = "INSERT INTO user (name, user_id, email, mobile_no, password)" +
-                "VALUES (?,?,?,?,?)";
+        String insertEx = "INSERT INTO user (name, user_id, email, mobile_no)" +
+                "VALUES (?,?,?,?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(insertEx);
@@ -144,7 +141,6 @@ public class UserController {
             ps.setString(2,userId);
             ps.setString(3,email);
             ps.setString(4,mobileNo);
-            ps.setString(5,password);
             ps.executeUpdate();
             conn.close();
 
@@ -210,7 +206,7 @@ public class UserController {
 
     }
 
-    @RequestMapping(value="/testest",method= RequestMethod.GET)
+    /*@RequestMapping(value="/testest",method= RequestMethod.GET)
     public String eiei() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         UserObject user = new UserObject("bankza","bankstch@gmail.com","156165156","15611651");
@@ -218,6 +214,6 @@ public class UserController {
         //Object to JSON in String
         String jsonInString = mapper.writeValueAsString(user);
         return jsonInString;
-    }
+    }*/
 
 }
