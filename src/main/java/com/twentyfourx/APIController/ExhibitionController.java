@@ -55,7 +55,7 @@ public class ExhibitionController {
         int id;
         for(int i = 0 ; i<size ; i++){
             //boolean status = listEx.get(i).checkDate();
-            listEx.get(i).setPassed(listEx.get(i).checkDate());
+            listEx.get(i).setIsExpired(listEx.get(i).checkDate());
             status = listEx.get(i).checkDate();
             id = listEx.get(i).getId();
             try

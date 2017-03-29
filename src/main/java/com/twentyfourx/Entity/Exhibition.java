@@ -35,7 +35,7 @@ public class Exhibition {
     private String agendaUrl;
     private String mapUrl;
 
-    private boolean isPassed;
+    private boolean isExpired;
 
     public Exhibition(int id,String name, String description, String location, String category, String startDate, String endDate, String posterUrl, boolean isFavourited
     ,Double latitude, Double longtitude, String agendaUrl, String mapUrl, boolean isPassed)  {
@@ -52,7 +52,7 @@ public class Exhibition {
         this.longtitude = longtitude;
         this.agendaUrl = agendaUrl;
         this.mapUrl = mapUrl;
-        this.isPassed = isPassed;
+        this.isExpired = isPassed;
     }
 
     public Exhibition(){
@@ -69,7 +69,7 @@ public class Exhibition {
         this.longtitude = 0.00;
         this.agendaUrl = "";
         this.mapUrl = "";
-        this.isPassed = false;
+        this.isExpired = false;
     }
 
 
@@ -193,12 +193,12 @@ public class Exhibition {
     }
 
 
-    public boolean isPassed() {
-        return isPassed;
+    public boolean getIsExpired() {
+        return isExpired;
     }
 
-    public void setPassed(boolean passed) {
-        isPassed = passed;
+    public void setIsExpired(boolean passed) {
+        this.isExpired = passed;
     }
 
     /*public void checkDate() {
@@ -228,22 +228,14 @@ public class Exhibition {
         //int i = 0;
         LocalDate localDate = LocalDate.now();
         if (myLocaldate.isBefore(localDate)) {
-            //this.isPassed = true;
-            //this.isPassed = true;
-            //i = 1;
+
             return true;
         } else {
-            //i = 0;
-            //this.isPassed = false;
+
             return false;
         }
 
-        /*System.out.println("");
-        System.out.println("");
-        System.out.println(localDate);
-        System.out.println(myLocaldate);
-        System.out.println(i);
-        */
+
     }
 
 

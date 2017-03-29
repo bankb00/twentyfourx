@@ -16,7 +16,7 @@ import java.util.List;
 public interface ExhibitionRepository extends CrudRepository<Exhibition, Integer>, JpaRepository<Exhibition, Integer> {
     Exhibition findById(int id);
     List<Exhibition> findByCategory(String category);
-    List<Exhibition> findByIsPassed(boolean isPassed);
+    List<Exhibition> findByIsExpired(boolean isPassed);
 }
 
 
