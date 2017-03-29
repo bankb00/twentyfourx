@@ -73,7 +73,7 @@ public class Ticket {
         this.holderRole = holderRole;
     }
 
-    public boolean isExpired() {
+    public boolean getIsExpired() {
         return isExpired;
     }
 
@@ -86,6 +86,19 @@ public class Ticket {
     private int id;
     private int exhibitionId;
     private String exhibitionName;
+
+    public Ticket(int id, int exhibitionId, String exhibitionName, String userId, String startDate, String endDate, String holderName, String holderRole, boolean isExpired) {
+        this.exhibitionId = exhibitionId;
+        this.exhibitionName = exhibitionName;
+        this.userId = userId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.holderName = holderName;
+        this.holderRole = holderRole;
+        this.isExpired = isExpired;
+        this.id = id;
+    }
+
     private String userId;
     private String startDate;
     private String endDate;
@@ -93,8 +106,6 @@ public class Ticket {
     private String holderRole;
     private boolean isExpired;
 
-    public Ticket(){
 
-    }
 
 }

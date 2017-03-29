@@ -10,7 +10,6 @@ import com.twentyfourx.Entity.Exhibition;
 import com.twentyfourx.Entity.ExhibitionObject;
 import com.twentyfourx.Repository.BoothRepository;
 import com.twentyfourx.Repository.ExhibitionRepository;
-import com.twentyfourx.Repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +35,7 @@ public class ExhibitionController {
     @Autowired
     private BoothRepository boothRepository;
 
-    @Autowired
+    /*@Autowired
     private TicketRepository ticketRepository;
     /*@Autowired
     private BoothContactRepository boothContactRepository;*/
