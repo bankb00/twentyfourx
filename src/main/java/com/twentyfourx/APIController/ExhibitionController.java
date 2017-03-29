@@ -4,10 +4,7 @@ package com.twentyfourx.APIController;
  * Created by Thanawat on 3/11/2017.
  */
 
-import com.twentyfourx.Entity.Booth;
-import com.twentyfourx.Entity.BoothObject;
-import com.twentyfourx.Entity.Exhibition;
-import com.twentyfourx.Entity.ExhibitionObject;
+import com.twentyfourx.Entity.*;
 import com.twentyfourx.Repository.BoothRepository;
 import com.twentyfourx.Repository.ExhibitionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -326,9 +323,9 @@ public class ExhibitionController {
     }
 
     //register and get ticket
-    @RequestMapping(value = "/{exhibitionId}/register", method=RequestMethod.GET)
+    @RequestMapping(value = "/{exhibitionId}/register", method=RequestMethod.POST)
     @ResponseBody
-    public String getTicket(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id, @PathVariable int exhibitionId) throws SQLException, Exception {
+    public ReturnRegister getTicket(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id, @PathVariable int exhibitionId,@RequestBody TicketObject ticket) throws SQLException, Exception {
         int id = 0;
         String userId = user_id;
         String userName = null;
@@ -339,6 +336,9 @@ public class ExhibitionController {
         ResultSet abc;
         List<Integer> listOfTicketId = new ArrayList<Integer>();
         int ticketId = 0;
+
+        String holderName = ticket.getName();
+        String companyName = ticket.getCompanyName();
 
         //exhibitiondetail
         String exhibitionName = exhibitionRepository.findById(exhibitionId).getName();
@@ -373,8 +373,8 @@ public class ExhibitionController {
                 //ถ้ายังไม่มี สร้างตั๋วมาใหม่
                 if(rs.next()==false){
                     System.out.println("Test noi di");
-                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id)" +
-                            "VALUES (?,?,?,?,?,?)";
+                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id, company_name)" +
+                            "VALUES (?,?,?,?,?,?,?)";
 
                     try {
                         PreparedStatement ps = conn.prepareStatement(insertTicket,Statement.RETURN_GENERATED_KEYS);
@@ -382,8 +382,9 @@ public class ExhibitionController {
                         ps.setString(2,userId);
                         ps.setString(3,startDate);
                         ps.setString(4,endDate);
-                        ps.setString(5,userName);
+                        ps.setString(5,holderName);
                         ps.setInt(6,exhibitionId);
+                        ps.setString(7,companyName);
                         ps.executeUpdate();
                         ResultSet rsd = ps.getGeneratedKeys();
                         if ( rsd.next() ) {
@@ -417,7 +418,8 @@ public class ExhibitionController {
                         System.err.println(e.getMessage());
                     }
 
-
+                    ReturnRegister reOb = new ReturnRegister(true,"You have successfully registered to Workaholic market @ United Silom. You can check your ticket out on your ticket page. See you there!");
+                    return reOb;
                 }
                 //ถ้ามีในตาราง user ticket แล้ว ต้องเชคว่าที่มีอะ ใช่ที่สมัครไปยัง
                 else{
@@ -439,13 +441,13 @@ public class ExhibitionController {
                             //ถ้าลงทะเบียนไปแล้ว
                             if(rs.getInt("exhibition_id")==exhibitionId){
                                 ticketId = rs.getInt("id");
-                                return "Already register"+ticketId;
+                                return null;
                             }
                         }
                     }
                     //ถ้า user ยังไม่มีตั๋วของงานนี้ สร้างใหม่
-                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id)" +
-                            "VALUES (?,?,?,?,?,?)";
+                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id, company_name)" +
+                            "VALUES (?,?,?,?,?,?,?)";
 
                     try {
                         PreparedStatement ps = conn.prepareStatement(insertTicket,Statement.RETURN_GENERATED_KEYS);
@@ -453,8 +455,9 @@ public class ExhibitionController {
                         ps.setString(2,userId);
                         ps.setString(3,startDate);
                         ps.setString(4,endDate);
-                        ps.setString(5,userName);
+                        ps.setString(5,holderName);
                         ps.setInt(6,exhibitionId);
+                        ps.setString(7,companyName);
                         ps.executeUpdate();
                         ResultSet rsd = ps.getGeneratedKeys();
                         if ( rsd.next() ) {
@@ -488,7 +491,8 @@ public class ExhibitionController {
                         System.err.println(e.getMessage());
                     }
 
-                    return "registered"+ticketId;
+                    ReturnRegister reOb = new ReturnRegister(true,"You have successfully registered to Workaholic market @ United Silom. You can check your ticket out on your ticket page. See you there!");
+                    return reOb;
 
                 }
                 //conn.close();
@@ -496,12 +500,14 @@ public class ExhibitionController {
                 System.err.println("Got an exception! ");
                 System.err.println(e.getMessage());
             }
+            ReturnRegister reOb = new ReturnRegister(false,"Can not Register!");
+            return reOb;
 
-            return "Can not Register";
 
         }
         else {
-            return "Can not Register";
+            ReturnRegister reOb = new ReturnRegister(false,"Can not Register!");
+            return reOb;
         }
     }
 
@@ -968,7 +974,7 @@ public class ExhibitionController {
 
 
     //Register with header for user    Not complete
-    @RequestMapping(value="/{exhibitionId}/register",method= RequestMethod.POST)
+    @RequestMapping(value="/{exhibitionId}/registerNotCOmplete",method= RequestMethod.POST)
     public @ResponseBody
     void registerExhibition (@RequestHeader(value="token") String tokenValue,@PathVariable int exhibitionId) {
 

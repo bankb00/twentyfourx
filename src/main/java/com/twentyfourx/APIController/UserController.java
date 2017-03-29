@@ -94,7 +94,7 @@ public class UserController {
 
                     login.setLoginSuccess(true);
 
-                    UserObject user = new UserObject(name,email,mobileNo,tokenValue,userId);
+                    UserObject user = new UserObject(name,email,mobileNo,userId,tokenValue);
                     //String jsonInString = mapper.writeValueAsString(user);
                     login.setUser(user);
                      //jsonInString = mapper.writeValueAsString(user);

@@ -18,7 +18,7 @@ public class ExhibitionObject {
     private String agendaUrl;
     private String mapUrl;
 
-    public ExhibitionObject() {
+    public ExhibitionObject(int exhibitionId, String exhibitionName, String startDate, String endDate) {
     }
 
     public int getId() {
