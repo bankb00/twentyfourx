@@ -122,7 +122,7 @@ public class UserController {
     }
 
     @RequestMapping(value="/register",method= RequestMethod.POST)
-    public @ResponseBody void userRegister(@RequestHeader(value="access_token") String tokenValue, @RequestHeader(value="user_id") String user_id, @RequestBody UserObject user) throws Exception {
+    public @ResponseBody LoginObject userRegister(@RequestHeader(value="access_token") String tokenValue, @RequestHeader(value="user_id") String user_id, @RequestBody UserObject user) throws Exception {
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
@@ -153,6 +153,8 @@ public class UserController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
+
+        return(userLogin(tokenValue,user_id));
 
     }
 
