@@ -190,87 +190,136 @@ public class ExhibitionController {
     //save Exhibition fav
     @RequestMapping(value = "/{exhibitionId}/saveFavourited", method=RequestMethod.GET)
     @ResponseBody
-    public SaveFavObject saveFavExhi(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id, @PathVariable int exhibitionId) throws SQLException, Exception {
+    public SaveFavObject saveFavExhi(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id, @PathVariable int exhibitionId, @RequestParam boolean favourited) throws SQLException, Exception {
         int id = 0;
         String userId = user_id;
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
+        if(favourited){
+            if(checkToken(tokenValue)==true) {
 
-        if(checkToken(tokenValue)==true) {
-
-            //check user is created?
-            try {
-
-                rs = stmt.executeQuery("SELECT * FROM user ");
-                while (rs.next()) {
-                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
-                        id = rs.getInt("id");
-                    }
-                }
-                //conn.close();
-            } catch (Exception e) {
-                System.err.println("Got an exception! ");
-                System.err.println(e.getMessage());
-            }
-
-            //id not then create
-            if (id == 0) {
-                String str = "INSERT INTO user (user_id)" +
-                        "VALUES ('" + userId + "')";
-
+                //check user is created?
                 try {
-                    stmt.executeUpdate(str);
+
+                    rs = stmt.executeQuery("SELECT * FROM user ");
+                    while (rs.next()) {
+                        if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
+                            id = rs.getInt("id");
+                        }
+                    }
                     //conn.close();
-
                 } catch (Exception e) {
                     System.err.println("Got an exception! ");
                     System.err.println(e.getMessage());
                 }
-                rs = stmt.executeQuery("SELECT * FROM user ");
-                while (rs.next()) {
-                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
-                        id = rs.getInt("id");
-                        System.out.println(id);
+
+                //id not then create
+                if (id == 0) {
+                    String str = "INSERT INTO user (user_id)" +
+                            "VALUES ('" + userId + "')";
+
+                    try {
+                        stmt.executeUpdate(str);
+                        //conn.close();
+
+                    } catch (Exception e) {
+                        System.err.println("Got an exception! ");
+                        System.err.println(e.getMessage());
+                    }
+                    rs = stmt.executeQuery("SELECT * FROM user ");
+                    while (rs.next()) {
+                        if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
+                            id = rs.getInt("id");
+                            System.out.println(id);
+                        }
                     }
                 }
+
+                if(id!=0){
+                    rs = stmt.executeQuery("SELECT * FROM user_and_exhibition WHERE user_id = "+id+"");
+                    while (rs.next()) {
+                        if (exhibitionId==(rs.getInt("exhibition_id"))) {
+                            SaveFavObject saveFavObject = new SaveFavObject(true,"You already add this exhibition to your Favourite");
+                            return saveFavObject;
+                        }
+                    }
+
+                    System.out.println("Create at user_and_exhibition");
+                    System.out.println(id);
+                    String str = "INSERT INTO user_and_exhibition (user_id, exhibition_id)" +
+                            "VALUES ('" + id + "', '"+exhibitionId+"')";
+
+                    try {
+                        stmt.executeUpdate(str);
+                        conn.close();
+
+                    } catch (Exception e) {
+                        System.err.println("Got an exception! ");
+                        System.err.println(e.getMessage());
+                    }
+                }
+                SaveFavObject saveFavObject = new SaveFavObject(true,"Successfully add");
+                return saveFavObject;
+
             }
-
-            if(id!=0){
-                rs = stmt.executeQuery("SELECT * FROM user_and_exhibition WHERE user_id = "+id+"");
-                while (rs.next()) {
-                    if (exhibitionId==(rs.getInt("exhibition_id"))) {
-                        SaveFavObject saveFavObject = new SaveFavObject(true,"You already add this exhibition to your Favourite");
-                        return saveFavObject;
-                    }
-                }
-
-                System.out.println("Create at user_and_exhibition");
-                System.out.println(id);
-                String str = "INSERT INTO user_and_exhibition (user_id, exhibition_id)" +
-                        "VALUES ('" + id + "', '"+exhibitionId+"')";
-
+            else {
+                SaveFavObject saveFavObject = new SaveFavObject(false,"Please login first");
+                return saveFavObject;
+            }
+        }
+        else{
+            if(checkToken(tokenValue)==true) {
+                //check user is created?
                 try {
-                    stmt.executeUpdate(str);
-                    conn.close();
 
+                    rs = stmt.executeQuery("SELECT * FROM user ");
+                    while (rs.next()) {
+                        if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
+                            id = rs.getInt("id");
+                        }
+                    }
+                    //conn.close();
                 } catch (Exception e) {
                     System.err.println("Got an exception! ");
                     System.err.println(e.getMessage());
                 }
-            }
-            SaveFavObject saveFavObject = new SaveFavObject(true,"Successfully add");
-            return saveFavObject;
 
+                //id not then create
+                if (id == 0) {
+                    SaveFavObject saveFavObject = new SaveFavObject(false,"Please login first");
+                    return saveFavObject;
+                }
+
+                if(id!=0){
+                    System.out.println("Create at user_and_exhibition");
+                    System.out.println(id);
+                    String str = "DELETE FROM user_and_exhibition WHERE user_id = "+id+" AND exhibition_id = "+exhibitionId+"";
+
+                    try {
+                        stmt.executeUpdate(str);
+                        conn.close();
+
+                    } catch (Exception e) {
+                        System.err.println("Got an exception! ");
+                        System.err.println(e.getMessage());
+                    }
+                }
+                SaveFavObject saveFavObject = new SaveFavObject(true,"Successfully Unsave");
+                return saveFavObject;
+
+            }
+            else {
+                SaveFavObject saveFavObject = new SaveFavObject(false,"Please login first");
+                return saveFavObject;
+            }
         }
-        else {
-            SaveFavObject saveFavObject = new SaveFavObject(false,"Please login first");
-            return saveFavObject;
-        }
+
+
     }
 
-    //UnFav Exhibition fav
+    /*//UnFav Exhibition fav
     @ResponseBody
     @RequestMapping(value = "/{exhibitionId}/unFavourited", method=RequestMethod.GET)
     public boolean unFavExhi(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id,@PathVariable int exhibitionId) throws SQLException, Exception {
@@ -332,8 +381,8 @@ public class ExhibitionController {
         else {
             System.out.println("UnValid");
             return false;
-        }*/
-    }
+        }
+    }*/
 
 
     //get fav ex
