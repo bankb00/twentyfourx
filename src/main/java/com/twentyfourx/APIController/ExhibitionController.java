@@ -83,12 +83,101 @@ public class ExhibitionController {
 
     }
 
+    //Iterable
     //list All Exhibition
     @RequestMapping(value="/all",method= RequestMethod.GET)
-    public @ResponseBody Iterable<Exhibition> getAllExhibitions() {
-        // This returns a JSON or XML with the users
-        return exhibitionRepository.findAll();
-        //return exhibitionRepository.
+    public @ResponseBody List<Exhibition> getAllExhibitions(@RequestHeader(required = false, value = "user_id") String user_id) throws SQLException {
+        int userId = 0;
+        List<Integer> listExId = new ArrayList<Integer>();
+        List<Exhibition> listEx = new ArrayList<Exhibition>();
+        if(user_id==null) {
+            return exhibitionRepository.findAll();
+        }
+        else{
+            String url = "jdbc:mysql://localhost:3306/bankza";
+            Connection conn = DriverManager.getConnection(url,"root","password");
+            Statement stmt = conn.createStatement();
+            ResultSet rs;
+
+            //get user id;
+            try {
+
+                rs = stmt.executeQuery("SELECT * FROM user ");
+                while (rs.next()) {
+                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
+                        userId = rs.getInt("id");
+                    }
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+            try {
+
+                rs = stmt.executeQuery("SELECT * FROM user_and_exhibition WHERE user_id = "+userId+" ");
+                while (rs.next()) {
+                    int i = rs.getInt("exhibition_id");
+                    listExId.add(i);
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+
+
+                try {
+                    rs = stmt.executeQuery("SELECT * FROM exhibition"+" ORDER BY start_date ASC");
+                    while ( rs.next() ) {
+                        //String lastName = rs.getString("name");
+                        //System.out.println(lastName);
+                        int id = rs.getInt("id");
+                        String name = rs.getString("name");
+                        String description = rs.getString("description");
+                        String location = rs.getString("location");
+                        String category = rs.getString("category");
+                        String startDate = rs.getString("start_date");
+                        String endDate = rs.getString("end_date");
+                        String posterUrl = rs.getString("poster_url");
+                        boolean isFavourited = rs.getBoolean("is_favourited");
+                        Double latitude = rs.getDouble("latitude");
+                        Double longtitude = rs.getDouble("longtitude");
+                        String agendaUrl = rs.getString("agenda_url");
+                        String mapUrl = rs.getString("map_url");
+                        boolean isPassed = rs.getBoolean("is_passed");
+
+                        boolean mode = false;
+
+                        for(int j = 0 ; j < listExId.size() ; j++){
+                            int exIndex = listExId.get(j);
+                            if(exIndex==id) {
+                                Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, true, latitude
+                                        , longtitude, agendaUrl, mapUrl, isPassed);
+
+                                listEx.add(exhibition);
+                                mode = true;
+                            }
+                        }
+                        if(mode!=true){
+                            Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
+                                    , longtitude, agendaUrl, mapUrl, isPassed);
+
+                            listEx.add(exhibition);
+                        }
+                    }
+                    //conn.close();
+                }
+                catch (Exception e) {
+                    System.err.println("Got an exception! ");
+                    System.err.println(e.getMessage());
+                }
+
+
+            return listEx;
+        }
     }
 
     //get exhibition
@@ -101,7 +190,7 @@ public class ExhibitionController {
     //save Exhibition fav
     @RequestMapping(value = "/{exhibitionId}/saveFavourited", method=RequestMethod.GET)
     @ResponseBody
-    public boolean saveFavExhi(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id, @PathVariable int exhibitionId) throws SQLException, Exception {
+    public SaveFavObject saveFavExhi(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id, @PathVariable int exhibitionId) throws SQLException, Exception {
         int id = 0;
         String userId = user_id;
         String url = "jdbc:mysql://localhost:3306/bankza";
@@ -149,6 +238,14 @@ public class ExhibitionController {
             }
 
             if(id!=0){
+                rs = stmt.executeQuery("SELECT * FROM user_and_exhibition WHERE user_id = "+id+"");
+                while (rs.next()) {
+                    if (exhibitionId==(rs.getInt("exhibition_id"))) {
+                        SaveFavObject saveFavObject = new SaveFavObject(true,"You already add this exhibition to your Favourite");
+                        return saveFavObject;
+                    }
+                }
+
                 System.out.println("Create at user_and_exhibition");
                 System.out.println(id);
                 String str = "INSERT INTO user_and_exhibition (user_id, exhibition_id)" +
@@ -163,11 +260,13 @@ public class ExhibitionController {
                     System.err.println(e.getMessage());
                 }
             }
-            return true;
+            SaveFavObject saveFavObject = new SaveFavObject(true,"Successfully add");
+            return saveFavObject;
 
         }
         else {
-            return false;
+            SaveFavObject saveFavObject = new SaveFavObject(false,"Please login first");
+            return saveFavObject;
         }
     }
 

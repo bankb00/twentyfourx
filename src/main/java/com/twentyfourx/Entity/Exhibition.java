@@ -129,7 +129,7 @@ public class Exhibition {
         this.posterUrl = posterUrl;
     }
 
-    public boolean isFavourited() {
+    public boolean getIsFavourited() {
         return isFavourited;
     }
 
