@@ -443,7 +443,7 @@ public class ExhibitionController {
                         String mapUrl = rs.getString("map_url");
                         boolean isPassed = rs.getBoolean("is_expired");
 
-                        Exhibition exhibition = new Exhibition(id,name,description,location,category,startDate,endDate,posterUrl,isFavourited,latitude
+                        Exhibition exhibition = new Exhibition(id,name,description,location,category,startDate,endDate,posterUrl,true,latitude
                                 ,longtitude,agendaUrl,mapUrl,isPassed);
 
                         listEx.add(exhibition);
