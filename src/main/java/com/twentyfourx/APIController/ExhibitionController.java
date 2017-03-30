@@ -668,8 +668,121 @@ public class ExhibitionController {
     //Filter By category
     @RequestMapping(value="/category/{category}",method = RequestMethod.GET)
     @ResponseBody
-    public List<Exhibition> filterByCategory(@PathVariable String category){
-        return exhibitionRepository.findByCategory(category);
+    public List<Exhibition> filterByCategory(@PathVariable String category,@RequestHeader(required = false, value = "user_id") String user_id) throws SQLException {
+        if(user_id==null){
+            return exhibitionRepository.findByCategory(category);
+        }
+        else{
+            checkSize();
+            int userId = 0;
+            List<Integer> listExId = new ArrayList<Integer>();
+            List<Exhibition> listEx = new ArrayList<Exhibition>();
+            List<Integer> listFaveId = new ArrayList<Integer>();
+            String url = "jdbc:mysql://localhost:3306/bankza";
+            Connection conn = DriverManager.getConnection(url,"root","password");
+            Statement stmt = conn.createStatement();
+            ResultSet rs;
+
+            try {
+
+                rs = stmt.executeQuery("SELECT * FROM user ");
+                while (rs.next()) {
+                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
+                        userId = rs.getInt("id");
+                    }
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+            try {
+
+                rs = stmt.executeQuery("SELECT * FROM user_and_exhibition WHERE user_id = " + userId + " ");
+                while (rs.next()) {
+                    int i = rs.getInt("exhibition_id");
+                    listFaveId.add(i);
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+
+
+        //search
+        try {
+            rs = stmt.executeQuery("SELECT * FROM exhibition ");
+            while (rs.next()) {
+                //if (search.equalsIgnoreCase(rs.getString("name"))) {
+                if (rs.getString("category").toLowerCase().indexOf(category.toLowerCase())!=-1) {
+                    //System.out.println("1");
+                    listExId.add(rs.getInt("id"));
+                }
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
+        // i มันไม่ใช่
+        for(int i = 0 ; i<listExId.size() ; i++){
+            int exId = listExId.get(i);
+            rs = stmt.executeQuery("SELECT * FROM exhibition WHERE id = "+exId+"");
+            while(rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                String location = rs.getString("location");
+                String categoryName = rs.getString("category");
+                String startDate = rs.getString("start_date");
+                String endDate = rs.getString("end_date");
+                String posterUrl = rs.getString("poster_url");
+                boolean isFavourited = rs.getBoolean("is_favourited");
+                Double latitude = rs.getDouble("latitude");
+                Double longtitude = rs.getDouble("longtitude");
+                String agendaUrl = rs.getString("agenda_url");
+                String mapUrl = rs.getString("map_url");
+                boolean isPassed = rs.getBoolean("is_expired");
+
+                if(user_id==null) {
+                    Exhibition exhibition = new Exhibition(id, name, description, location, categoryName, startDate, endDate, posterUrl, isFavourited, latitude
+                            , longtitude, agendaUrl, mapUrl, isPassed);
+
+                    listEx.add(exhibition);
+                }
+                else{
+                    boolean mode = false;
+
+                    for(int j = 0 ; j < listFaveId.size() ; j++){
+                        int exIndex = listFaveId.get(j);
+                        if(exIndex==id) {
+                            Exhibition exhibition = new Exhibition(id, name, description, location, categoryName, startDate, endDate, posterUrl, true, latitude
+                                    , longtitude, agendaUrl, mapUrl, isPassed);
+
+                            listEx.add(exhibition);
+                            mode = true;
+                        }
+                    }
+                    if(mode!=true){
+                        Exhibition exhibition = new Exhibition(id, name, description, location, categoryName, startDate, endDate, posterUrl, isFavourited, latitude
+                                , longtitude, agendaUrl, mapUrl, isPassed);
+
+                        listEx.add(exhibition);
+                    }
+                }
+            }
+
+        }
+
+        return listEx;
+
+    }
+
+
     }
 
     //List of Category
