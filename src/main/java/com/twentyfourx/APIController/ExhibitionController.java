@@ -306,9 +306,94 @@ public class ExhibitionController {
 
     //get exhibition
     @RequestMapping(value = "/{exhibitionId}", method=RequestMethod.GET)
-    public Exhibition getExhibition(@PathVariable int exhibitionId){
-        return  exhibitionRepository.findById(exhibitionId);
+    public Exhibition getExhibition(@PathVariable int exhibitionId,@RequestHeader(required = false, value = "user_id") String user_id) throws SQLException {
+        checkSize();
+        int userId = 0;
+        List<Integer> listExId = new ArrayList<Integer>();
+        if(user_id==null) {
+            return exhibitionRepository.findById(exhibitionId);
+        }
+        else {
+            String url = "jdbc:mysql://localhost:3306/bankza";
+            Connection conn = DriverManager.getConnection(url, "root", "password");
+            Statement stmt = conn.createStatement();
+            ResultSet rs;
 
+            //get user id;
+            try {
+
+                rs = stmt.executeQuery("SELECT * FROM user ");
+                while (rs.next()) {
+                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
+                        userId = rs.getInt("id");
+                    }
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+            try {
+
+                rs = stmt.executeQuery("SELECT * FROM user_and_exhibition WHERE user_id = " + userId + " ");
+                while (rs.next()) {
+                    int i = rs.getInt("exhibition_id");
+                    listExId.add(i);
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+
+            try {
+                rs = stmt.executeQuery("SELECT * FROM exhibition WHERE  id = " + exhibitionId + "");
+                while (rs.next()) {
+                    //String lastName = rs.getString("name");
+                    //System.out.println(lastName);
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    String description = rs.getString("description");
+                    String location = rs.getString("location");
+                    String category = rs.getString("category");
+                    String startDate = rs.getString("start_date");
+                    String endDate = rs.getString("end_date");
+                    String posterUrl = rs.getString("poster_url");
+                    boolean isFavourited = rs.getBoolean("is_favourited");
+                    Double latitude = rs.getDouble("latitude");
+                    Double longtitude = rs.getDouble("longtitude");
+                    String agendaUrl = rs.getString("agenda_url");
+                    String mapUrl = rs.getString("map_url");
+                    boolean isPassed = rs.getBoolean("is_expired");
+
+                    boolean mode = false;
+
+                    for (int j = 0; j < listExId.size(); j++) {
+                        int exIndex = listExId.get(j);
+                        if (exIndex == id) {
+                            Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, true, latitude
+                                    , longtitude, agendaUrl, mapUrl, isPassed);
+                            mode = true;
+                            return exhibition;
+                        }
+                    }
+                    if (mode != true) {
+                        Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
+                                , longtitude, agendaUrl, mapUrl, isPassed);
+                        return exhibition;
+                    }
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+
+            return null;
+        }
     }
 
     //save Exhibition fav

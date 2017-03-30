@@ -215,7 +215,7 @@ public class Exhibition {
 
     public boolean checkDate()  {
 
-        String string = this.getStartDate();
+        String string = this.getEndDate();
 
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = null;
