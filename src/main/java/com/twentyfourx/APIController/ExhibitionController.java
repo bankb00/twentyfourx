@@ -78,6 +78,69 @@ public class ExhibitionController {
 
     }
 
+    //get Banner
+    @RequestMapping(value = "/getBanner", method = RequestMethod.GET)
+    public List<BannerObject> getBanner() throws SQLException {
+        List<BannerObject> listBanner = new ArrayList<BannerObject>();
+
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+
+        //get user id;
+        try {
+
+            rs = stmt.executeQuery("SELECT * FROM banner ");
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String bannerUrl = rs.getString("banner_url");
+                int exhibitionId = rs.getInt("exhibition_id");
+
+                BannerObject object = new BannerObject(id,bannerUrl,exhibitionId);
+                listBanner.add(object);
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return listBanner;
+    }
+
+    //change banner
+    @ResponseBody
+    @RequestMapping(value = "/editBanner", method = RequestMethod.POST)
+    public boolean changeBanner(@RequestBody UrlObject urlObject) throws Exception {
+        //List<BannerObject> listBanner = new ArrayList<BannerObject>();
+
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+
+        String newUrl = urlObject.getUrl();
+        int exhibitionId = urlObject.getExhibitionId();
+        int bannerId = urlObject.getId();
+
+        //get user id;
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE banner SET banner_url = ? ,exhibition_id = ? WHERE id = ? ");
+            ps.setString(1,newUrl);
+            ps.setInt(2,exhibitionId);
+            ps.setInt(3,bannerId);
+            ps.executeUpdate();
+
+
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return true;
+    }
+
     //Iterable
     //list All Exhibition
     @RequestMapping(value="/all",method= RequestMethod.GET)
