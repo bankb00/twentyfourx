@@ -127,10 +127,50 @@ public class ExhibitionController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
-        bannerList.setExhibitins(listEx);
+        bannerList.setExhibitions(listEx);
 
         return bannerList;
     }
+
+    //getUserList
+    @RequestMapping(value = "/{exhibitionId}/getUser", method = RequestMethod.GET)
+    public List<UserObjectForExhibition> getUserList(@PathVariable int exhibitionId) throws SQLException {
+        List<UserObjectForExhibition> listUser = new ArrayList<UserObjectForExhibition>();
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+        ResultSet abc;
+        try {
+
+            rs = stmt.executeQuery("SELECT * FROM ticket WHERE exhibition_id = "+exhibitionId+" ");
+            while (rs.next()) {
+                String name = rs.getString("holder_name");
+                String companyName = rs.getString("company_name");
+                String userID = rs.getString("user_id");
+                UserObjectForExhibition userObjectForExhibition = new UserObjectForExhibition();
+
+                Statement newStatement = conn.createStatement();
+                abc = newStatement.executeQuery("SELECT * FROM user WHERE user_id = "+userID+" ");
+                while(abc.next()){
+                    String email = abc.getString("email");
+                    String mobileNo = abc.getString("mobile_no");
+                    userObjectForExhibition.setEmail(email);
+                    userObjectForExhibition.setMonileNo(mobileNo);
+                }
+
+                userObjectForExhibition.setName(name);
+                userObjectForExhibition.setCompanyName(companyName);
+                listUser.add(userObjectForExhibition);
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return listUser;
+    }
+
 
     //change banner
     @ResponseBody

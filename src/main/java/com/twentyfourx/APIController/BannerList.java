@@ -11,12 +11,12 @@ public class BannerList {
     private List<BannerObject> banners;
     private List<ExhibitionObjectForBanner> exhibitions;
 
-    public List<ExhibitionObjectForBanner> getExhibitins() {
+    public List<ExhibitionObjectForBanner> getExhibitions() {
         return exhibitions;
     }
 
-    public void setExhibitins(List<ExhibitionObjectForBanner> exhibitins) {
-        this.exhibitions = exhibitins;
+    public void setExhibitions(List<ExhibitionObjectForBanner> exhibitions) {
+        this.exhibitions = exhibitions;
     }
 
     public List<BannerObject> getBanners() {
