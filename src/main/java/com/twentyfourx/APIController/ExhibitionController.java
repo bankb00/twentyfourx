@@ -32,11 +32,6 @@ public class ExhibitionController {
     @Autowired
     private BoothRepository boothRepository;
 
-    /*@Autowired
-    private TicketRepository ticketRepository;
-    /*@Autowired
-    private BoothContactRepository boothContactRepository;*/
-
     private List<String> categories = new ArrayList<>(Arrays.asList("Food", "Home & Decorate","Technology & Electronics Devices"
             ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion","Others"));
 
@@ -59,10 +54,10 @@ public class ExhibitionController {
         {
             Statement st = conn.createStatement();
             if(status==true) {
-                st.executeUpdate("UPDATE exhibition SET is_passed= 1 WHERE id = " + id + "");
+                st.executeUpdate("UPDATE exhibition SET is_expired= 1 WHERE id = " + id + "");
             }
             else {
-                st.executeUpdate("UPDATE exhibition SET is_passed= 0 WHERE id = " + id + "");
+                st.executeUpdate("UPDATE exhibition SET is_expired= 0 WHERE id = " + id + "");
             }
 
 
@@ -87,6 +82,7 @@ public class ExhibitionController {
     //list All Exhibition
     @RequestMapping(value="/all",method= RequestMethod.GET)
     public @ResponseBody List<Exhibition> getAllExhibitions(@RequestHeader(required = false, value = "user_id") String user_id) throws SQLException {
+        checkSize();
         int userId = 0;
         List<Integer> listExId = new ArrayList<Integer>();
         List<Exhibition> listEx = new ArrayList<Exhibition>();
@@ -147,7 +143,7 @@ public class ExhibitionController {
                         Double longtitude = rs.getDouble("longtitude");
                         String agendaUrl = rs.getString("agenda_url");
                         String mapUrl = rs.getString("map_url");
-                        boolean isPassed = rs.getBoolean("is_passed");
+                        boolean isPassed = rs.getBoolean("is_expired");
 
                         boolean mode = false;
 
@@ -445,7 +441,7 @@ public class ExhibitionController {
                         Double longtitude = rs.getDouble("longtitude");
                         String agendaUrl = rs.getString("agenda_url");
                         String mapUrl = rs.getString("map_url");
-                        boolean isPassed = rs.getBoolean("is_passed");
+                        boolean isPassed = rs.getBoolean("is_expired");
 
                         Exhibition exhibition = new Exhibition(id,name,description,location,category,startDate,endDate,posterUrl,isFavourited,latitude
                                 ,longtitude,agendaUrl,mapUrl,isPassed);
@@ -719,7 +715,7 @@ public class ExhibitionController {
             ResultSet rs;
 
 
-            rs = stmt.executeQuery("SELECT * FROM exhibition WHERE is_passed = false "+" ORDER BY start_date ASC");
+            rs = stmt.executeQuery("SELECT * FROM exhibition WHERE is_expired = false "+" ORDER BY start_date ASC");
             while ( rs.next() ) {
                 //String lastName = rs.getString("name");
                 //System.out.println(lastName);
@@ -736,7 +732,7 @@ public class ExhibitionController {
                 Double longtitude = rs.getDouble("longtitude");
                 String agendaUrl = rs.getString("agenda_url");
                 String mapUrl = rs.getString("map_url");
-                boolean isPassed = rs.getBoolean("is_passed");
+                boolean isPassed = rs.getBoolean("is_expired");
 
                 Exhibition exhibition = new Exhibition(id,name,description,location,category,startDate,endDate,posterUrl,isFavourited,latitude
                 ,longtitude,agendaUrl,mapUrl,isPassed);
@@ -1239,15 +1235,48 @@ public class ExhibitionController {
 
     //search exhibition by name
     @RequestMapping(value = "/search", method=RequestMethod.GET)
-    public @ResponseBody List<Exhibition> search(@RequestParam("key") String text) throws SQLException {
+    public @ResponseBody List<Exhibition> search(@RequestParam("key") String text,@RequestHeader(required = false, value = "user_id") String user_id) throws SQLException {
         String search = text;
         List<Integer> listExId = new ArrayList<Integer>();
         List<Exhibition> listEx = new ArrayList<Exhibition>();
-
+        List<Integer> listFaveId = new ArrayList<Integer>();
+        int userId = 0;
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
+
+        if(user_id!=null) {//get user id;
+            try {
+
+                rs = stmt.executeQuery("SELECT * FROM user ");
+                while (rs.next()) {
+                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
+                        userId = rs.getInt("id");
+                    }
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+            try {
+
+                rs = stmt.executeQuery("SELECT * FROM user_and_exhibition WHERE user_id = " + userId + " ");
+                while (rs.next()) {
+                    int i = rs.getInt("exhibition_id");
+                    listFaveId.add(i);
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+
+        }
+
+        //search
         try {
             rs = stmt.executeQuery("SELECT * FROM exhibition ");
             while (rs.next()) {
@@ -1281,12 +1310,34 @@ public class ExhibitionController {
                 Double longtitude = rs.getDouble("longtitude");
                 String agendaUrl = rs.getString("agenda_url");
                 String mapUrl = rs.getString("map_url");
-                boolean isPassed = rs.getBoolean("is_passed");
+                boolean isPassed = rs.getBoolean("is_expired");
 
-                Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
-                        , longtitude, agendaUrl, mapUrl, isPassed);
+                if(user_id==null) {
+                    Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
+                            , longtitude, agendaUrl, mapUrl, isPassed);
 
-                listEx.add(exhibition);
+                    listEx.add(exhibition);
+                }
+                else{
+                    boolean mode = false;
+
+                    for(int j = 0 ; j < listFaveId.size() ; j++){
+                        int exIndex = listFaveId.get(j);
+                        if(exIndex==id) {
+                            Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, true, latitude
+                                    , longtitude, agendaUrl, mapUrl, isPassed);
+
+                            listEx.add(exhibition);
+                            mode = true;
+                        }
+                    }
+                    if(mode!=true){
+                        Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
+                                , longtitude, agendaUrl, mapUrl, isPassed);
+
+                        listEx.add(exhibition);
+                    }
+                }
             }
 
         }
