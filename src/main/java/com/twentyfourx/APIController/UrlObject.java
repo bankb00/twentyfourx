@@ -22,18 +22,18 @@ public class UrlObject {
         this.exhibitionId = exhibitionId;
     }
 
-    private String url;
+    private String bannerUrl;
     private int exhibitionId;
 
     public UrlObject() {
     }
 
-    public String getUrl() {
+    public String getBannerUrl() {
 
-        return url;
+        return bannerUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setBannerUrl(String url) {
+        this.bannerUrl = url;
     }
 }

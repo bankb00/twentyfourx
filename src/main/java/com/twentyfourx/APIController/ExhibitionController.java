@@ -80,14 +80,18 @@ public class ExhibitionController {
 
     //get Banner
     @RequestMapping(value = "/getBanner", method = RequestMethod.GET)
-    public List<BannerObject> getBanner() throws SQLException {
+    public BannerList getBanner() throws SQLException {
+        //List of banner
+        checkSize();
         List<BannerObject> listBanner = new ArrayList<BannerObject>();
+        BannerList bannerList = new BannerList();
 
+        List<ExhibitionObjectForBanner> listEx = new ArrayList<ExhibitionObjectForBanner>();
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
-
+        ResultSet abc;
         //get user id;
         try {
 
@@ -105,7 +109,27 @@ public class ExhibitionController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
-        return listBanner;
+
+        bannerList.setBanners(listBanner);
+        //return
+        //return listBanner;
+        try {
+
+            abc = stmt.executeQuery("SELECT * FROM exhibition WHERE is_expired = FALSE ");
+            while (abc.next()) {
+                String name = abc.getString("name");
+                int exhibitionId = abc.getInt("id");
+                ExhibitionObjectForBanner exhibitionObjectForBanner = new ExhibitionObjectForBanner(name,exhibitionId);
+                listEx.add(exhibitionObjectForBanner);
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        bannerList.setExhibitins(listEx);
+
+        return bannerList;
     }
 
     //change banner
@@ -114,12 +138,13 @@ public class ExhibitionController {
     public boolean changeBanner(@RequestBody UrlObject urlObject) throws Exception {
         //List<BannerObject> listBanner = new ArrayList<BannerObject>();
 
+
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
 
-        String newUrl = urlObject.getUrl();
+        String newUrl = urlObject.getBannerUrl();
         int exhibitionId = urlObject.getExhibitionId();
         int bannerId = urlObject.getId();
 
