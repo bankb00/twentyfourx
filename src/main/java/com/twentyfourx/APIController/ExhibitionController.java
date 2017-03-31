@@ -18,6 +18,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +34,7 @@ public class ExhibitionController {
     @Autowired
     private BoothRepository boothRepository;
 
-    private List<String> categories = new ArrayList<>(Arrays.asList("Food", "Home & Decorate","Technology & Electronics Devices"
+    private List<String> categories = new ArrayList<>(Arrays.asList("Food", "Home & Decorate","Technology"
             ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion","Others"));
 
 
@@ -133,7 +135,7 @@ public class ExhibitionController {
     }
 
     //getUserList
-    @RequestMapping(value = "/{exhibitionId}/getUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/{exhibitionId}/user", method = RequestMethod.GET)
     public List<UserObjectForExhibition> getUserList(@PathVariable int exhibitionId) throws SQLException {
         List<UserObjectForExhibition> listUser = new ArrayList<UserObjectForExhibition>();
         String url = "jdbc:mysql://localhost:3306/bankza";
@@ -148,6 +150,7 @@ public class ExhibitionController {
                 String name = rs.getString("holder_name");
                 String companyName = rs.getString("company_name");
                 String userID = rs.getString("user_id");
+                String registeredDate = rs.getString("registered_date");
                 UserObjectForExhibition userObjectForExhibition = new UserObjectForExhibition();
 
                 Statement newStatement = conn.createStatement();
@@ -155,10 +158,13 @@ public class ExhibitionController {
                 while(abc.next()){
                     String email = abc.getString("email");
                     String mobileNo = abc.getString("mobile_no");
+                    String userId  = abc.getString("user_id");
                     userObjectForExhibition.setEmail(email);
                     userObjectForExhibition.setMonileNo(mobileNo);
-                }
+                    userObjectForExhibition.setId(userId);
 
+                }
+                userObjectForExhibition.setRegisteredDate(registeredDate);
                 userObjectForExhibition.setName(name);
                 userObjectForExhibition.setCompanyName(companyName);
                 listUser.add(userObjectForExhibition);
@@ -683,6 +689,13 @@ public class ExhibitionController {
     @RequestMapping(value = "/{exhibitionId}/register", method=RequestMethod.POST)
     @ResponseBody
     public ReturnRegister getTicket(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id, @PathVariable int exhibitionId,@RequestBody TicketObject ticket) throws SQLException, Exception {
+
+        //get date
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.now();
+        String currentDate = dtf.format(localDate);
+        System.out.println(currentDate);
+
         int id = 0;
         String userId = user_id;
         String userName = null;
@@ -730,8 +743,8 @@ public class ExhibitionController {
                 //ถ้ายังไม่มี สร้างตั๋วมาใหม่
                 if(rs.next()==false){
                     System.out.println("Test noi di");
-                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id, company_name)" +
-                            "VALUES (?,?,?,?,?,?,?)";
+                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id, company_name, registered_date)" +
+                            "VALUES (?,?,?,?,?,?,?,?)";
 
                     try {
                         PreparedStatement ps = conn.prepareStatement(insertTicket,Statement.RETURN_GENERATED_KEYS);
@@ -742,6 +755,7 @@ public class ExhibitionController {
                         ps.setString(5,holderName);
                         ps.setInt(6,exhibitionId);
                         ps.setString(7,companyName);
+                        ps.setString(8,currentDate);
                         ps.executeUpdate();
                         ResultSet rsd = ps.getGeneratedKeys();
                         if ( rsd.next() ) {
@@ -775,18 +789,18 @@ public class ExhibitionController {
                         System.err.println(e.getMessage());
                     }
 
-                    ReturnRegister reOb = new ReturnRegister(true,"You have successfully registered to Workaholic market @ United Silom. You can check your ticket out on your ticket page. See you there!");
+                    ReturnRegister reOb = new ReturnRegister(true,"You have successfully registered to "+exhibitionName+" You can check your ticket out on your ticket page. See you there!");
                     return reOb;
                 }
                 //ถ้ามีในตาราง user ticket แล้ว ต้องเชคว่าที่มีอะ ใช่ที่สมัครไปยัง
                 else{
                     System.out.println("check check2");
-                    rs = stmt.executeQuery("SELECT * FROM user_and_ticket");
+                    rs = stmt.executeQuery("SELECT * FROM user_and_ticket WHERE  user_id = "+id+"");
                     while (rs.next()) {
                         System.out.println("while loop for add list id");
-                        if (id==rs.getInt("user_id")) {
-                            listOfTicketId.add(rs.getInt("ticket_id"));
-                        }
+
+                        listOfTicketId.add(rs.getInt("ticket_id"));
+
                     }
 
                     //เอาลิสของ id ตั๋ว ที่มีมาเชค
@@ -798,13 +812,14 @@ public class ExhibitionController {
                             //ถ้าลงทะเบียนไปแล้ว
                             if(rs.getInt("exhibition_id")==exhibitionId){
                                 ticketId = rs.getInt("id");
-                                return null;
+                                ReturnRegister reOb = new ReturnRegister(false,"You already register to this exhibition");
+                                return reOb;
                             }
                         }
                     }
                     //ถ้า user ยังไม่มีตั๋วของงานนี้ สร้างใหม่
-                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id, company_name)" +
-                            "VALUES (?,?,?,?,?,?,?)";
+                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id, company_name, registered_date)" +
+                            "VALUES (?,?,?,?,?,?,?,?)";
 
                     try {
                         PreparedStatement ps = conn.prepareStatement(insertTicket,Statement.RETURN_GENERATED_KEYS);
@@ -815,6 +830,7 @@ public class ExhibitionController {
                         ps.setString(5,holderName);
                         ps.setInt(6,exhibitionId);
                         ps.setString(7,companyName);
+                        ps.setString(8,currentDate);
                         ps.executeUpdate();
                         ResultSet rsd = ps.getGeneratedKeys();
                         if ( rsd.next() ) {
@@ -848,7 +864,7 @@ public class ExhibitionController {
                         System.err.println(e.getMessage());
                     }
 
-                    ReturnRegister reOb = new ReturnRegister(true,"You have successfully registered to Workaholic market @ United Silom. You can check your ticket out on your ticket page. See you there!");
+                    ReturnRegister reOb = new ReturnRegister(true,"You have successfully registered to "+exhibitionName+" You can check your ticket out on your ticket page. See you there!");
                     return reOb;
 
                 }
@@ -1670,6 +1686,15 @@ public class ExhibitionController {
 
         return listEx;
 
+    }
+
+    @RequestMapping(value = "/test2", method=RequestMethod.GET)
+    public String test2(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.now();
+        String currentDate = dtf.format(localDate);
+        System.out.println(currentDate);
+        return currentDate;
     }
 }
 

@@ -61,11 +61,12 @@ public class GetTicketObject {
         this.companyName = companyName;
     }
 
-    public boolean isExpired() {
+
+    public boolean getIsExpired(){
         return isExpired;
     }
 
-    public void setExpired(boolean expired) {
+    public void setIsExpired(boolean expired) {
         isExpired = expired;
     }
 }

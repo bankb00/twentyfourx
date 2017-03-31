@@ -14,7 +14,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -75,7 +81,7 @@ public class TicketController {
             for(int j = 0; j< listTickId.size() ; j++){
                 int tickIndex = listTickId.get(j);
                 try {
-                    rs = stmt.executeQuery("SELECT * FROM ticket WHERE id = "+tickIndex+" "+" ORDER BY start_date ASC");
+                    rs = stmt.executeQuery("SELECT * FROM ticket WHERE id = "+tickIndex+" "+" ORDER BY end_date ASC");
                     while ( rs.next() ) {
                         //String lastName = rs.getString("name");
                         //System.out.println(lastName);
@@ -90,11 +96,20 @@ public class TicketController {
                         String companyName = rs.getString("company_name");
                         boolean isExpired = rs.getBoolean("is_expired");
 
+
                         ExhibitionObjectForTicket exhibition = new ExhibitionObjectForTicket(exhibitionId,exhibitionName,startDate,endDate);
-                        GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,startDate,endDate,holderName,holderRole,companyName,isExpired);
+
+                        if(checkDate(endDate)==true){
+                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,startDate,endDate,holderName,holderRole,companyName,true);
+                            listTicket.add(getTicketObject);
+                        }
+                        else{
+                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,startDate,endDate,holderName,holderRole,companyName,false);
+                            listTicket.add(getTicketObject);
+                        }
                         //Ticket ticket = new Ticket(id, exhibitionId,exhibitionName,holderId, startDate, endDate, holderName, holderRole, isExpired, companyName);
 
-                        listTicket.add(getTicketObject);
+
                     }
                     //conn.close();
                 }
@@ -249,4 +264,28 @@ public class TicketController {
     }
 
 
+    public boolean checkDate(String endDate)  {
+
+        String string = endDate;
+
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            date = format.parse(string);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        LocalDate myLocaldate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        //int i = 0;
+        LocalDate localDate = LocalDate.now();
+        if (myLocaldate.isBefore(localDate)) {
+
+            return true;
+        } else {
+
+            return false;
+        }
+
+
+    }
 }

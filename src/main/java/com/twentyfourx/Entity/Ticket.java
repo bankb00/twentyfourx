@@ -87,7 +87,7 @@ public class Ticket {
     private int exhibitionId;
     private String exhibitionName;
 
-    public Ticket(int id, int exhibitionId, String exhibitionName, String userId, String startDate, String endDate, String holderName, String holderRole, boolean isExpired, String companyName) {
+    public Ticket(int id, int exhibitionId, String exhibitionName, String userId, String startDate, String endDate, String holderName, String holderRole, boolean isExpired, String companyName, String registerDate) {
         this.exhibitionId = exhibitionId;
         this.exhibitionName = exhibitionName;
         this.userId = userId;
@@ -98,9 +98,19 @@ public class Ticket {
         this.isExpired = isExpired;
         this.id = id;
         this.companyName = companyName;
+        this.registeredDate = registerDate;
     }
     public Ticket(){
 
+    }
+    private String registeredDate;
+
+    public String getRegisteredDate() {
+        return registeredDate;
+    }
+
+    public void setRegisterDate(String registerDate) {
+        this.registeredDate = registerDate;
     }
 
     private String userId;
