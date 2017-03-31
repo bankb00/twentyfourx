@@ -260,7 +260,7 @@ public class ExhibitionController {
 
 
                 try {
-                    rs = stmt.executeQuery("SELECT * FROM exhibition"+" ORDER BY start_date ASC");
+                    rs = stmt.executeQuery("SELECT * FROM exhibition"+" ORDER BY is_expired ASC, start_date ASC ");
                     while ( rs.next() ) {
                         //String lastName = rs.getString("name");
                         //System.out.println(lastName);

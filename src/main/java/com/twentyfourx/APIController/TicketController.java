@@ -10,10 +10,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,6 +48,27 @@ public class TicketController {
 
         List<GetTicketObject> listTicket= new ArrayList<GetTicketObject>();
         if(checkToken(tokenValue)==true) {
+            //update is expired
+            try
+            {
+                rs = stmt.executeQuery("SELECT * FROM ticket ");
+                while (rs.next()) {
+                   String endDate = rs.getString("end_date");
+                   int id = rs.getInt("id");
+                   if(checkDate(endDate)==true){
+                       PreparedStatement ps = conn.prepareStatement(
+                               "UPDATE ticket SET is_expired = true WHERE id = ? ");
+                       ps.setInt(1,id);
+                       ps.executeUpdate();
+                   }
+                }
+
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+
             try {
 
                 rs = stmt.executeQuery("SELECT * FROM user ");
@@ -78,7 +96,7 @@ public class TicketController {
                 System.err.println(e.getMessage());
             }
 
-            for(int j = 0; j< listTickId.size() ; j++){
+            /*for(int j = 0; j< listTickId.size() ; j++){
                 int tickIndex = listTickId.get(j);
                 try {
                     rs = stmt.executeQuery("SELECT * FROM ticket WHERE id = "+tickIndex+" "+" ORDER BY end_date ASC");
@@ -117,7 +135,47 @@ public class TicketController {
                     System.err.println("Got an exception! ");
                     System.err.println(e.getMessage());
                 }
-            }
+            }*/
+
+
+                try {
+                    rs = stmt.executeQuery("SELECT * FROM ticket WHERE user_id = "+user_id+" "+" ORDER BY is_expired ASC, end_date ASC ");
+                    while ( rs.next() ) {
+                        //String lastName = rs.getString("name");
+                        //System.out.println(lastName);
+                        int id = rs.getInt("id");
+                        int exhibitionId = rs.getInt("exhibition_id");
+                        String exhibitionName = rs.getString("exhibition_name");
+                        String holderId = rs.getString("user_id");
+                        String startDate = rs.getString( "start_date");
+                        String endDate = rs.getString("end_date");
+                        String holderName = rs.getString("holder_name");
+                        String holderRole = rs.getString("holder_role");
+                        String companyName = rs.getString("company_name");
+                        boolean isExpired = rs.getBoolean("is_expired");
+
+
+                        ExhibitionObjectForTicket exhibition = new ExhibitionObjectForTicket(exhibitionId,exhibitionName,startDate,endDate);
+
+                        if(checkDate(endDate)==true){
+                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,startDate,endDate,holderName,holderRole,companyName,true);
+                            listTicket.add(getTicketObject);
+                        }
+                        else{
+                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,startDate,endDate,holderName,holderRole,companyName,false);
+                            listTicket.add(getTicketObject);
+                        }
+                        //Ticket ticket = new Ticket(id, exhibitionId,exhibitionName,holderId, startDate, endDate, holderName, holderRole, isExpired, companyName);
+
+
+                    }
+                    //conn.close();
+                }
+                catch (Exception e) {
+                    System.err.println("Got an exception! ");
+                    System.err.println(e.getMessage());
+                }
+
 
 
             conn.close();
@@ -264,9 +322,9 @@ public class TicketController {
     }
 
 
-    public boolean checkDate(String endDate)  {
+    public boolean checkDate(String dateTicket)  {
 
-        String string = endDate;
+        String string = dateTicket;
 
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = null;
