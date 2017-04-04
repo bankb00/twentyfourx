@@ -8,16 +8,47 @@ public class GetTicketObject {
     private ExhibitionObjectForTicket exhibition;
     private String holderName;
     private String holderRole;
-    private String companyName;
-    private boolean isExpired;
+    private String department;
+    private String registeredDate;
 
-    public GetTicketObject(int id, ExhibitionObjectForTicket exhibition, String startDate, String endDate, String holderName, String holderRole, String companyName, boolean isExpired) {
+    public String getRegisteredDate() {
+        return registeredDate;
+    }
+
+    public void setRegisteredDate(String registeredDated) {
+        this.registeredDate = registeredDated;
+    }
+
+    private boolean isExpired;
+    private boolean evaluation;
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+
+
+    public boolean isEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(boolean evaluation) {
+        this.evaluation = evaluation;
+    }
+
+    public GetTicketObject(int id, ExhibitionObjectForTicket exhibition, String holderName, String holderRole, String dapartment, boolean isExpired,boolean evaluation,String registeredDate) {
         this.id = id;
         this.exhibition = exhibition;
         this.holderName = holderName;
         this.holderRole = holderRole;
-        this.companyName = companyName;
+        this.department = dapartment;
         this.isExpired = isExpired;
+        this.evaluation = evaluation;
+        this.registeredDate = registeredDate;
     }
 
     public int getId() {
@@ -52,15 +83,6 @@ public class GetTicketObject {
     public void setHolderRole(String holderRole) {
         this.holderRole = holderRole;
     }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
 
     public boolean getIsExpired(){
         return isExpired;

@@ -96,48 +96,6 @@ public class TicketController {
                 System.err.println(e.getMessage());
             }
 
-            /*for(int j = 0; j< listTickId.size() ; j++){
-                int tickIndex = listTickId.get(j);
-                try {
-                    rs = stmt.executeQuery("SELECT * FROM ticket WHERE id = "+tickIndex+" "+" ORDER BY end_date ASC");
-                    while ( rs.next() ) {
-                        //String lastName = rs.getString("name");
-                        //System.out.println(lastName);
-                        int id = rs.getInt("id");
-                        int exhibitionId = rs.getInt("exhibition_id");
-                        String exhibitionName = rs.getString("exhibition_name");
-                        String holderId = rs.getString("user_id");
-                        String startDate = rs.getString( "start_date");
-                        String endDate = rs.getString("end_date");
-                        String holderName = rs.getString("holder_name");
-                        String holderRole = rs.getString("holder_role");
-                        String companyName = rs.getString("company_name");
-                        boolean isExpired = rs.getBoolean("is_expired");
-
-
-                        ExhibitionObjectForTicket exhibition = new ExhibitionObjectForTicket(exhibitionId,exhibitionName,startDate,endDate);
-
-                        if(checkDate(endDate)==true){
-                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,startDate,endDate,holderName,holderRole,companyName,true);
-                            listTicket.add(getTicketObject);
-                        }
-                        else{
-                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,startDate,endDate,holderName,holderRole,companyName,false);
-                            listTicket.add(getTicketObject);
-                        }
-                        //Ticket ticket = new Ticket(id, exhibitionId,exhibitionName,holderId, startDate, endDate, holderName, holderRole, isExpired, companyName);
-
-
-                    }
-                    //conn.close();
-                }
-                catch (Exception e) {
-                    System.err.println("Got an exception! ");
-                    System.err.println(e.getMessage());
-                }
-            }*/
-
-
                 try {
                     rs = stmt.executeQuery("SELECT * FROM ticket WHERE user_id = "+user_id+" "+" ORDER BY is_expired ASC, end_date ASC ");
                     while ( rs.next() ) {
@@ -151,18 +109,20 @@ public class TicketController {
                         String endDate = rs.getString("end_date");
                         String holderName = rs.getString("holder_name");
                         String holderRole = rs.getString("holder_role");
-                        String companyName = rs.getString("company_name");
+                        String companyName = rs.getString("department");
+                        String registerdDate = rs.getString("registered_date");
                         boolean isExpired = rs.getBoolean("is_expired");
+                        boolean evaluation = rs.getBoolean("evaluation");
 
 
                         ExhibitionObjectForTicket exhibition = new ExhibitionObjectForTicket(exhibitionId,exhibitionName,startDate,endDate);
 
                         if(checkDate(endDate)==true){
-                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,startDate,endDate,holderName,holderRole,companyName,true);
+                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,holderName,holderRole,companyName,true, evaluation,registerdDate);
                             listTicket.add(getTicketObject);
                         }
                         else{
-                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,startDate,endDate,holderName,holderRole,companyName,false);
+                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,holderName,holderRole,companyName,false, evaluation,registerdDate);
                             listTicket.add(getTicketObject);
                         }
                         //Ticket ticket = new Ticket(id, exhibitionId,exhibitionName,holderId, startDate, endDate, holderName, holderRole, isExpired, companyName);

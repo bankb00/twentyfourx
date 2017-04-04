@@ -142,31 +142,25 @@ public class ExhibitionController {
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
-        ResultSet abc;
         try {
 
             rs = stmt.executeQuery("SELECT * FROM ticket WHERE exhibition_id = "+exhibitionId+" ");
             while (rs.next()) {
                 String name = rs.getString("holder_name");
-                String companyName = rs.getString("company_name");
-                String userID = rs.getString("user_id");
+                String department = rs.getString("department");
                 String registeredDate = rs.getString("registered_date");
+                String email = rs.getString("email");
+                String mobileNo = rs.getString("mobile_no");
+                String holderRole = rs.getString("holder_role");
+                String userId  = rs.getString("user_id");
                 UserObjectForExhibition userObjectForExhibition = new UserObjectForExhibition();
-
-                Statement newStatement = conn.createStatement();
-                abc = newStatement.executeQuery("SELECT * FROM user WHERE user_id = "+userID+" ");
-                while(abc.next()){
-                    String email = abc.getString("email");
-                    String mobileNo = abc.getString("mobile_no");
-                    String userId  = abc.getString("user_id");
-                    userObjectForExhibition.setEmail(email);
-                    userObjectForExhibition.setMonileNo(mobileNo);
-                    userObjectForExhibition.setId(userId);
-
-                }
                 userObjectForExhibition.setRegisteredDate(registeredDate);
                 userObjectForExhibition.setName(name);
-                userObjectForExhibition.setCompanyName(companyName);
+                userObjectForExhibition.setId(userId);
+                userObjectForExhibition.setEmail(email);
+                userObjectForExhibition.setMonileNo(mobileNo);
+                userObjectForExhibition.setHolderRole(holderRole);
+                userObjectForExhibition.setDepartment(department);
                 listUser.add(userObjectForExhibition);
             }
             //conn.close();
@@ -221,7 +215,52 @@ public class ExhibitionController {
         List<Integer> listExId = new ArrayList<Integer>();
         List<Exhibition> listEx = new ArrayList<Exhibition>();
         if(user_id==null) {
-            return exhibitionRepository.findAll();
+            //return exhibitionRepository.findAll();
+
+            //test
+            String url = "jdbc:mysql://localhost:3306/bankza";
+            Connection conn = DriverManager.getConnection(url,"root","password");
+            Statement stmt = conn.createStatement();
+            ResultSet rs;
+            try {
+                rs = stmt.executeQuery("SELECT * FROM exhibition"+" ORDER BY is_expired ASC, start_date ASC ");
+                while ( rs.next() ) {
+                    //String lastName = rs.getString("name");
+                    //System.out.println(lastName);
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    String description = rs.getString("description");
+                    String location = rs.getString("location");
+                    String category = rs.getString("category");
+                    String startDate = rs.getString("start_date");
+                    String endDate = rs.getString("end_date");
+                    String posterUrl = rs.getString("poster_url");
+                    boolean isFavourited = rs.getBoolean("is_favourited");
+                    Double latitude = rs.getDouble("latitude");
+                    Double longtitude = rs.getDouble("longtitude");
+                    String agendaUrl = rs.getString("agenda_url");
+                    String mapUrl = rs.getString("map_url");
+                    boolean isPassed = rs.getBoolean("is_expired");
+
+
+
+
+                            Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
+                                    , longtitude, agendaUrl, mapUrl, isPassed);
+
+                            listEx.add(exhibition);
+
+
+
+
+                }
+                //conn.close();
+            }
+            catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+            return listEx;
         }
         else{
             String url = "jdbc:mysql://localhost:3306/bankza";
@@ -708,7 +747,10 @@ public class ExhibitionController {
         int ticketId = 0;
 
         String holderName = ticket.getName();
-        String companyName = ticket.getCompanyName();
+        String holderRole = ticket.getHolderRole();
+        String department = ticket.getDepartment();
+        String email = ticket.getEmail();
+        String mobileNo = ticket.getMobileNo();
 
         //exhibitiondetail
         String exhibitionName = exhibitionRepository.findById(exhibitionId).getName();
@@ -743,8 +785,8 @@ public class ExhibitionController {
                 //ถ้ายังไม่มี สร้างตั๋วมาใหม่
                 if(rs.next()==false){
                     System.out.println("Test noi di");
-                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id, company_name, registered_date)" +
-                            "VALUES (?,?,?,?,?,?,?,?)";
+                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id, department, registered_date, holder_role, email, mobile_no)" +
+                            "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
                     try {
                         PreparedStatement ps = conn.prepareStatement(insertTicket,Statement.RETURN_GENERATED_KEYS);
@@ -754,8 +796,11 @@ public class ExhibitionController {
                         ps.setString(4,endDate);
                         ps.setString(5,holderName);
                         ps.setInt(6,exhibitionId);
-                        ps.setString(7,companyName);
+                        ps.setString(7,department);
                         ps.setString(8,currentDate);
+                        ps.setString(9,holderRole);
+                        ps.setString(10,email);
+                        ps.setString(11,mobileNo);
                         ps.executeUpdate();
                         ResultSet rsd = ps.getGeneratedKeys();
                         if ( rsd.next() ) {
@@ -818,8 +863,8 @@ public class ExhibitionController {
                         }
                     }
                     //ถ้า user ยังไม่มีตั๋วของงานนี้ สร้างใหม่
-                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id, company_name, registered_date)" +
-                            "VALUES (?,?,?,?,?,?,?,?)";
+                    String insertTicket = "INSERT INTO ticket (exhibition_name, user_id, start_date, end_date, holder_name, exhibition_id, department, registered_date, holder_role, email, mobile_no)" +
+                            "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
                     try {
                         PreparedStatement ps = conn.prepareStatement(insertTicket,Statement.RETURN_GENERATED_KEYS);
@@ -829,8 +874,11 @@ public class ExhibitionController {
                         ps.setString(4,endDate);
                         ps.setString(5,holderName);
                         ps.setInt(6,exhibitionId);
-                        ps.setString(7,companyName);
+                        ps.setString(7,department);
                         ps.setString(8,currentDate);
+                        ps.setString(9,holderRole);
+                        ps.setString(10,email);
+                        ps.setString(11,mobileNo);
                         ps.executeUpdate();
                         ResultSet rsd = ps.getGeneratedKeys();
                         if ( rsd.next() ) {
@@ -879,7 +927,7 @@ public class ExhibitionController {
 
         }
         else {
-            ReturnRegister reOb = new ReturnRegister(false,"Can not Register!");
+            ReturnRegister reOb = new ReturnRegister(false,"Can not Register!, Your token is expired");
             return reOb;
         }
     }

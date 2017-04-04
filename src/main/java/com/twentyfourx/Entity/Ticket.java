@@ -9,6 +9,49 @@ import javax.persistence.*;
 @Table(name = "Ticket")
 public class Ticket {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private int exhibitionId;
+    private String exhibitionName;
+    private boolean evaluation;
+    private String userId;
+    private String startDate;
+    private String endDate;
+    private String holderName;
+    private String holderRole;
+    private String email;
+    private String mobileNo;
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    private String department;
+    private boolean isExpired;
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
+
+
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public int getId() {
         return id;
     }
@@ -81,13 +124,17 @@ public class Ticket {
         isExpired = expired;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private int exhibitionId;
-    private String exhibitionName;
 
-    public Ticket(int id, int exhibitionId, String exhibitionName, String userId, String startDate, String endDate, String holderName, String holderRole, boolean isExpired, String companyName, String registerDate) {
+
+    public boolean isEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(boolean evaluation) {
+        this.evaluation = evaluation;
+    }
+
+    public Ticket(int id, int exhibitionId, String exhibitionName, String userId, String startDate, String endDate, String holderName, String holderRole, boolean isExpired, String department, String registerDate, boolean evaluation,String email,String mobileNo) {
         this.exhibitionId = exhibitionId;
         this.exhibitionName = exhibitionName;
         this.userId = userId;
@@ -97,8 +144,11 @@ public class Ticket {
         this.holderRole = holderRole;
         this.isExpired = isExpired;
         this.id = id;
-        this.companyName = companyName;
+        this.department = department;
         this.registeredDate = registerDate;
+        this.evaluation = evaluation;
+        this.email = email;
+        this.mobileNo = mobileNo;
     }
     public Ticket(){
 
@@ -113,22 +163,9 @@ public class Ticket {
         this.registeredDate = registerDate;
     }
 
-    private String userId;
-    private String startDate;
-    private String endDate;
-    private String holderName;
-    private String holderRole;
 
-    public String getCompanyName() {
-        return companyName;
-    }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
 
-    private String companyName;
-    private boolean isExpired;
 
 
 

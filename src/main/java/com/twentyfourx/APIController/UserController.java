@@ -77,6 +77,7 @@ public class UserController {
         String name;
         String email;
         String mobileNo;
+        String password;
 
 
         //ObjectMapper mapper = new ObjectMapper();
@@ -91,10 +92,11 @@ public class UserController {
                     name = rs.getString("name");
                     email = rs.getString("email");
                     mobileNo = rs.getString("mobile_no");
+                    password = rs.getString("password");
 
                     login.setLoginSuccess(true);
 
-                    UserObject user = new UserObject(name,email,mobileNo,userId,tokenValue);
+                    UserObject user = new UserObject(name,email,mobileNo,userId,tokenValue,password);
                     //String jsonInString = mapper.writeValueAsString(user);
                     login.setUser(user);
                      //jsonInString = mapper.writeValueAsString(user);
@@ -129,11 +131,12 @@ public class UserController {
         String email = user.getEmail();
         String mobileNo = user.getMobileNo();
         String userId = user_id;
+        String password = user.getPassword();
 
 
 
-        String insertEx = "INSERT INTO user (name, user_id, email, mobile_no)" +
-                "VALUES (?,?,?,?)";
+        String insertEx = "INSERT INTO user (name, user_id, email, mobile_no, password)" +
+                "VALUES (?,?,?,?,?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(insertEx);
@@ -141,6 +144,7 @@ public class UserController {
             ps.setString(2,userId);
             ps.setString(3,email);
             ps.setString(4,mobileNo);
+            ps.setString(5,password);
             ps.executeUpdate();
             conn.close();
 

@@ -3,10 +3,29 @@ package com.twentyfourx.APIController;
 /**
  * Created by Thanawat on 3/30/2017.
  */
+// ตัวป้อน ตอนกดลงทะเบียน
 public class TicketObject {
     private String name;
     private String email;
     private String mobileNo;
+    private String department;
+    private String holderRole;
+
+    public String getHolderRole() {
+        return holderRole;
+    }
+
+    public void setHolderRole(String holderRole) {
+        this.holderRole = holderRole;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
     public String getName() {
         return name;
@@ -32,13 +51,4 @@ public class TicketObject {
         this.mobileNo = mobileNo;
     }
 
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    private String companyName;
 }

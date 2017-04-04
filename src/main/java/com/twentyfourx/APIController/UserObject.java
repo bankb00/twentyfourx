@@ -9,6 +9,15 @@ public class UserObject {
     private String mobileNo;
     private String userId;
     private String accessToken;
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getUserId() {
         return userId;
@@ -26,12 +35,13 @@ public class UserObject {
         this.accessToken = accessToken;
     }
 
-    public UserObject(String name, String email, String mobileNo, String userId, String accessToken) {
+    public UserObject(String name, String email, String mobileNo, String userId, String accessToken, String password) {
         this.name = name;
         this.email = email;
         this.mobileNo = mobileNo;
         this.userId = userId;
         this.accessToken = accessToken;
+        this.password = password;
 
     }
 
