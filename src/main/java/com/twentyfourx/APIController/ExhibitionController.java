@@ -927,7 +927,7 @@ public class ExhibitionController {
 
         }
         else {
-            ReturnRegister reOb = new ReturnRegister(false,"Can not Register!, Your token is expired");
+            ReturnRegister reOb = new ReturnRegister(false,"Can not Register!, You do not have permission");
             return reOb;
         }
     }
