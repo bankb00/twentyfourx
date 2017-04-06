@@ -935,11 +935,37 @@ public class ExhibitionController {
 
     //get booths
     @RequestMapping(value="/{exhibitionId}/booths",method= RequestMethod.GET)
-    public @ResponseBody List<Booth> getAllBooths(@PathVariable int exhibitionId){
-    //public void getAllBooths(@PathVariable int exhibitionId){
+    public @ResponseBody List<Booth> getAllBooths(@PathVariable int exhibitionId) throws SQLException {
+
+        List<Booth> listBooth = new ArrayList<Booth>();
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
 
 
-        return boothRepository.findBoothByExhibitionId(exhibitionId);
+        try {
+
+            rs = stmt.executeQuery("SELECT * FROM booth WHERE exhibition_id = "+exhibitionId+" "+" ORDER BY booth_code ASC");
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                String boothCode = rs.getString("booth_code");
+                int exId = rs.getInt("exhibition_id");
+                String logoUrl = rs.getString("logo_url");
+                String brochureUrl = rs.getString("brochure_url");
+
+                Booth newbooth = new Booth(id,name,description,boothCode,exId,logoUrl,brochureUrl);
+                listBooth.add(newbooth);
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return listBooth;
+        //return boothRepository.findBoothByExhibitionId(exhibitionId);
     }
 
     //Filter By category
