@@ -47,7 +47,7 @@ public class TicketController {
 
 
         List<GetTicketObject> listTicket= new ArrayList<GetTicketObject>();
-        if(checkToken(tokenValue)==true) {
+        if(checkToken(tokenValue,user_id)==true) {
             //update is expired
             try
             {
@@ -147,89 +147,8 @@ public class TicketController {
 
     }
 
-    /*//get Ticket
-    @RequestMapping(value="/{user_id}",method= RequestMethod.GET)
-    public @ResponseBody
-    List<Ticket> getTicket(@RequestHeader(value="access_token") String tokenValue, @PathVariable String user_id) throws Exception {
-        String url = "jdbc:mysql://localhost:3306/bankza";
-        Connection conn = DriverManager.getConnection(url, "root", "password");
-        Statement stmt = conn.createStatement();
-        ResultSet rs;
-        int userId = 0;
-        List<Integer> listTickId= new ArrayList<Integer>();
 
-
-        List<Ticket> listTicket= new ArrayList<Ticket>();
-        if(checkToken(tokenValue)==true) {
-            try {
-
-                rs = stmt.executeQuery("SELECT * FROM user ");
-                while (rs.next()) {
-                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
-                        userId = rs.getInt("id");
-                    }
-                }
-                //conn.close();
-            } catch (Exception e) {
-                System.err.println("Got an exception! ");
-                System.err.println(e.getMessage());
-            }
-
-            try {
-
-                rs = stmt.executeQuery("SELECT * FROM user_and_ticket WHERE user_id = "+userId+" ");
-                while (rs.next()) {
-                    int i = rs.getInt("ticket_id");
-                    listTickId.add(i);
-                }
-                //conn.close();
-            } catch (Exception e) {
-                System.err.println("Got an exception! ");
-                System.err.println(e.getMessage());
-            }
-
-            for(int j = 0; j< listTickId.size() ; j++){
-                int tickIndex = listTickId.get(j);
-                try {
-                    rs = stmt.executeQuery("SELECT * FROM ticket WHERE id = "+tickIndex+" "+" ORDER BY start_date ASC");
-                    while ( rs.next() ) {
-                        //String lastName = rs.getString("name");
-                        //System.out.println(lastName);
-                        int id = rs.getInt("id");
-                        int exhibitionId = rs.getInt("exhibition_id");
-                        String exhibitionName = rs.getString("exhibition_name");
-                        String holderId = rs.getString("user_id");
-                        String startDate = rs.getString( "start_date");
-                        String endDate = rs.getString("end_date");
-                        String holderName = rs.getString("holder_name");
-                        String holderRole = rs.getString("holder_role");
-                        String companyName = rs.getString("company_name");
-                        boolean isExpired = rs.getBoolean("is_expired");
-
-                        Ticket ticket = new Ticket(id, exhibitionId,exhibitionName,holderId, startDate, endDate, holderName, holderRole, isExpired, companyName);
-
-                        listTicket.add(ticket);
-                    }
-                    //conn.close();
-                }
-                catch (Exception e) {
-                    System.err.println("Got an exception! ");
-                    System.err.println(e.getMessage());
-                }
-            }
-
-
-            conn.close();
-            return listTicket;
-        }
-        else {
-            return listTicket;
-        }
-
-    }*/
-
-
-    public boolean checkToken(String token) throws  Exception{
+    public boolean checkToken(String token, String userId) throws  Exception{
         String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0";
         //String userToken = "EAADnEZCfV0nwBAO4HYFGrnJdjIrlVV66whWgKe80UUCZCsH15B4sM55Ob3dH3ThwMv3BsZC6635c3LYPdbx9yIX3ooXmZBDa5ZBW0X9ZA0mqCWQsc36XYZBpG2uUWYa20U96ns8zvOJGIjGZBM7msrGocMQKoMjauK8I0kj0C9hCnObl22tUz4xSIuZBSfaE9k3gZD";
         String userToken = token;
@@ -274,9 +193,26 @@ public class TicketController {
         String str =sb.toString();
         in.close();
 
-        //print result
-        //System.out.println(isValid);
-        //return str;
+        String dburl = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(dburl, "root", "password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+
+        //get user id;
+        try {
+
+            rs = stmt.executeQuery("SELECT * FROM user WHERE user_id = "+userId+" ");
+            while (rs.next()) {
+                if (token.equalsIgnoreCase(rs.getString("access_token"))) {
+                    isValid = true;
+                }
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
         return isValid;
 
     }

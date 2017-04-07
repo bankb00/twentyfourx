@@ -452,7 +452,7 @@ public class ExhibitionController {
         Statement stmt = conn.createStatement();
         ResultSet rs;
         if(favourited){
-            if(checkToken(tokenValue)==true) {
+            if(checkToken(tokenValue,user_id)==true) {
 
                 //check user is created?
                 try {
@@ -524,7 +524,7 @@ public class ExhibitionController {
             }
         }
         else{
-            if(checkToken(tokenValue)==true) {
+            if(checkToken(tokenValue,user_id)==true) {
                 //check user is created?
                 try {
 
@@ -573,70 +573,6 @@ public class ExhibitionController {
 
     }
 
-    /*//UnFav Exhibition fav
-    @ResponseBody
-    @RequestMapping(value = "/{exhibitionId}/unFavourited", method=RequestMethod.GET)
-    public boolean unFavExhi(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id,@PathVariable int exhibitionId) throws SQLException, Exception {
-
-        int id = 0;
-        String userId = user_id;
-        String url = "jdbc:mysql://localhost:3306/bankza";
-        Connection conn = DriverManager.getConnection(url,"root","password");
-        Statement stmt = conn.createStatement();
-        ResultSet rs;
-
-        if(checkToken(tokenValue)==true) {
-            //check user is created?
-            try {
-
-                rs = stmt.executeQuery("SELECT * FROM user ");
-                while (rs.next()) {
-                    if (user_id.equalsIgnoreCase(rs.getString("user_id"))) {
-                        id = rs.getInt("id");
-                    }
-                }
-                //conn.close();
-            } catch (Exception e) {
-                System.err.println("Got an exception! ");
-                System.err.println(e.getMessage());
-            }
-
-            //id not then create
-            if (id == 0) {
-                return false;
-            }
-
-            if(id!=0){
-                System.out.println("Create at user_and_exhibition");
-                System.out.println(id);
-                String str = "DELETE FROM user_and_exhibition WHERE user_id = "+id+" AND exhibition_id = "+exhibitionId+"";
-
-                try {
-                    stmt.executeUpdate(str);
-                    conn.close();
-
-                } catch (Exception e) {
-                    System.err.println("Got an exception! ");
-                    System.err.println(e.getMessage());
-                }
-            }
-            return true;
-
-        }
-        else {
-            return false;
-        }
-
-
-        /*if(checkToken(tokenValue)==true){
-            exhibitionRepository.findById(exhibitionId).setFavourited(false);
-            return true;
-        }
-        else {
-            System.out.println("UnValid");
-            return false;
-        }
-    }*/
 
 
     //get fav ex
@@ -651,7 +587,7 @@ public class ExhibitionController {
 
 
         List<Exhibition> listEx= new ArrayList<Exhibition>();
-        if(checkToken(tokenValue)==true) {
+        if(checkToken(tokenValue,user_id)==true) {
             try {
 
                 rs = stmt.executeQuery("SELECT * FROM user ");
@@ -758,7 +694,7 @@ public class ExhibitionController {
         String endDate = exhibitionRepository.findById(exhibitionId).getEndDate();
 
 
-        if(checkToken(tokenValue)==true) {
+        if(checkToken(tokenValue,user_id)==true) {
                                                 //check ticket is created?
             //get userid
             try {
@@ -1533,36 +1469,8 @@ public class ExhibitionController {
     }
 
 
-    //Register with header for user    Not complete
-    @RequestMapping(value="/{exhibitionId}/registerNotCOmplete",method= RequestMethod.POST)
-    public @ResponseBody
-    void registerExhibition (@RequestHeader(value="token") String tokenValue,@PathVariable int exhibitionId) {
 
-        int exhibition_id = exhibitionId;
-        int user_id = 1; //userid
-
-        String token = tokenValue;
-        System.out.println(token);
-
-        String  str = "INSERT INTO ticket (exhibition_id, user_id, start_date, end_date, holder_name, holder_role, is_expired, can_register)" +
-                "VALUES ("+exhibition_id+","+user_id+", '2017-02-5', '2017-02-7', 'bankbank', 'visitor', 0, 0)";
-
-        try {
-            String url = "jdbc:mysql://localhost:3306/bankza";
-            Connection conn = DriverManager.getConnection(url,"root","password");
-            Statement stmt = conn.createStatement();
-
-            stmt.executeUpdate(str);
-
-            conn.close();
-        }
-        catch (Exception e) {
-            System.err.println("Got an exception! ");
-            System.err.println(e.getMessage());
-        }
-    }
-
-    public boolean checkToken(String token) throws  Exception{
+    public boolean checkToken(String token, String userId) throws  Exception{
         String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0";
         //String userToken = "EAADnEZCfV0nwBAO4HYFGrnJdjIrlVV66whWgKe80UUCZCsH15B4sM55Ob3dH3ThwMv3BsZC6635c3LYPdbx9yIX3ooXmZBDa5ZBW0X9ZA0mqCWQsc36XYZBpG2uUWYa20U96ns8zvOJGIjGZBM7msrGocMQKoMjauK8I0kj0C9hCnObl22tUz4xSIuZBSfaE9k3gZD";
         String userToken = token;
@@ -1607,9 +1515,26 @@ public class ExhibitionController {
         String str =sb.toString();
         in.close();
 
-            //print result
-        //System.out.println(isValid);
-            //return str;
+        String dburl = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(dburl, "root", "password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+
+        //get user id;
+        try {
+
+            rs = stmt.executeQuery("SELECT * FROM user WHERE user_id = "+userId+" ");
+            while (rs.next()) {
+                if (token.equalsIgnoreCase(rs.getString("access_token"))) {
+                   isValid = true;
+                }
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
         return isValid;
 
     }
