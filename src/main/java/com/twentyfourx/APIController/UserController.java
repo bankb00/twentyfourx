@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.sql.*;
 
 /**
@@ -207,6 +208,169 @@ public class UserController {
         //System.out.println(isValid);
         //return str;
         return isValid;
+
+    }
+
+    @RequestMapping(value="/register/userName",method= RequestMethod.POST)
+    public @ResponseBody void userRegisterForUserName(@RequestBody UserObject user) throws Exception {
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+        String name = user.getName();
+        String email = user.getEmail();
+        String mobileNo = user.getMobileNo();
+        String password = user.getPassword();
+        String username = "username";
+
+
+
+        String insertUser = "INSERT INTO user (name, email, mobile_no, password, type)" +
+                "VALUES (?,?,?,?,?)";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(insertUser);
+            ps.setString(1,name);
+            ps.setString(2,email);
+            ps.setString(3,mobileNo);
+            ps.setString(4,password);
+            ps.setString(5,username);
+            ps.executeUpdate();
+            conn.close();
+
+        }
+        catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
+        //return(userLogin(tokenValue,user_id));
+
+    }
+
+    @RequestMapping(value="/login/username",method= RequestMethod.POST)
+    public @ResponseBody LoginObject emailLogin(@RequestBody usernameLoginObject object) throws Exception {
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+        ResultSet abc;
+        String username = object.getUserName();
+        String password = object.getPassword();
+        LoginObject login = new LoginObject(false,false);
+
+        try {
+            rs = stmt.executeQuery("SELECT * FROM user WHERE password = "+password+"");
+            while (rs.next()) {
+                System.out.println(username);
+                System.out.println(password);
+               if(username.equalsIgnoreCase(rs.getString("name"))){
+                   int id = rs.getInt("id");
+                   //gen token
+                   SecureRandom random = new SecureRandom();
+                   byte bytes[] = new byte[20];
+                   random.nextBytes(bytes);
+                   String token = bytes.toString();
+                   //return "Your token is ......1;";
+
+                   try
+                   {
+                       PreparedStatement ps = conn.prepareStatement(
+                               "UPDATE user SET access_token = ?, user_id = ? WHERE id = ? ");
+                       ps.setString(1,token);
+                       ps.setInt(2,id);
+                       ps.setInt(3,id);
+                       ps.executeUpdate();
+                   }
+                   catch (SQLException ex)
+                   {
+                       System.err.println(ex.getMessage());
+                   }
+
+                   try {
+                       abc = stmt.executeQuery("SELECT * FROM user WHERE id = "+id+"");
+                       while (abc.next()) {
+                               String name = abc.getString("name");
+                               String email = abc.getString("email");
+                               String mobileNo = abc.getString("mobile_no");
+                               password = abc.getString("password");
+                               String userId = abc.getString("user_id");
+                               String tokenValue = abc.getString("access_token");
+
+                               login.setLoginSuccess(true);
+
+                               UserObject user = new UserObject(name,email,mobileNo,userId,tokenValue,password);
+                               //String jsonInString = mapper.writeValueAsString(user);
+                               login.setUser(user);
+                               login.setIsRegister(true);
+                               //jsonInString = mapper.writeValueAsString(user);
+
+                       }
+                       //conn.close();
+                   } catch (Exception e) {
+                       System.err.println("Got an exception! ");
+                       System.err.println(e.getMessage());
+                   }
+                   return login;
+               }
+               else if(username.equalsIgnoreCase(rs.getString("email"))){
+                   int id = rs.getInt("id");
+                   //gen token
+                   SecureRandom random = new SecureRandom();
+                   byte bytes[] = new byte[20];
+                   random.nextBytes(bytes);
+                   String token = bytes.toString();
+                   //return "Your token is ......1;";
+
+                   try
+                   {
+                       PreparedStatement ps = conn.prepareStatement(
+                               "UPDATE user SET access_token = ?, user_id = ? WHERE id = ? ");
+                       ps.setString(1,token);
+                       ps.setInt(2,id);
+                       ps.setInt(3,id);
+                       ps.executeUpdate();
+                   }
+                   catch (SQLException ex)
+                   {
+                       System.err.println(ex.getMessage());
+                   }
+
+                   try {
+                       abc = stmt.executeQuery("SELECT * FROM user WHERE id = "+id+"");
+                       while (abc.next()) {
+                           String name = abc.getString("name");
+                           String email = abc.getString("email");
+                           String mobileNo = abc.getString("mobile_no");
+                           password = abc.getString("password");
+                           String userId = abc.getString("user_id");
+                           String tokenValue = abc.getString("access_token");
+
+                           login.setLoginSuccess(true);
+
+                           UserObject user = new UserObject(name,email,mobileNo,userId,tokenValue,password);
+                           //String jsonInString = mapper.writeValueAsString(user);
+                           login.setUser(user);
+                           login.setIsRegister(true);
+                           //jsonInString = mapper.writeValueAsString(user);
+
+                       }
+                       //conn.close();
+                   } catch (Exception e) {
+                       System.err.println("Got an exception! ");
+                       System.err.println(e.getMessage());
+                   }
+                   return login;
+               }
+
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        //username or password wrong
+        return login;
 
     }
 
