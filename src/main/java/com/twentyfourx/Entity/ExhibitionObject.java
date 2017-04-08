@@ -17,6 +17,24 @@ public class ExhibitionObject {
     private Double longtitude;
     private String agendaUrl;
     private String mapUrl;
+    private String websiteUrl;
+    private String preWebsiteText;
+
+    public String getPreWebsiteText() {
+        return preWebsiteText;
+    }
+
+    public void setPreWebsiteText(String preWebsiteText) {
+        this.preWebsiteText = preWebsiteText;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
+    }
 
     public ExhibitionObject() {
     }

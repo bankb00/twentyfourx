@@ -241,12 +241,14 @@ public class ExhibitionController {
                     String agendaUrl = rs.getString("agenda_url");
                     String mapUrl = rs.getString("map_url");
                     boolean isPassed = rs.getBoolean("is_expired");
+                    String websiteUrl = rs.getString("website_url");
+                    String preWebsiteText = rs.getString("pre_website_text");
 
 
 
 
                             Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
-                                    , longtitude, agendaUrl, mapUrl, isPassed);
+                                    , longtitude, agendaUrl, mapUrl, isPassed, websiteUrl,preWebsiteText);
 
                             listEx.add(exhibition);
 
@@ -317,6 +319,8 @@ public class ExhibitionController {
                         String agendaUrl = rs.getString("agenda_url");
                         String mapUrl = rs.getString("map_url");
                         boolean isPassed = rs.getBoolean("is_expired");
+                        String websiteUrl = rs.getString("website_url");
+                        String preWebsiteText = rs.getString("pre_website_text");
 
                         boolean mode = false;
 
@@ -324,7 +328,7 @@ public class ExhibitionController {
                             int exIndex = listExId.get(j);
                             if(exIndex==id) {
                                 Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, true, latitude
-                                        , longtitude, agendaUrl, mapUrl, isPassed);
+                                        , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
 
                                 listEx.add(exhibition);
                                 mode = true;
@@ -332,7 +336,7 @@ public class ExhibitionController {
                         }
                         if(mode!=true){
                             Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
-                                    , longtitude, agendaUrl, mapUrl, isPassed);
+                                    , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
 
                             listEx.add(exhibition);
                         }
@@ -412,6 +416,8 @@ public class ExhibitionController {
                     String agendaUrl = rs.getString("agenda_url");
                     String mapUrl = rs.getString("map_url");
                     boolean isPassed = rs.getBoolean("is_expired");
+                    String websiteUrl = rs.getString("website_url");
+                    String preWebsiteText = rs.getString("pre_website_text");
 
                     boolean mode = false;
 
@@ -419,14 +425,14 @@ public class ExhibitionController {
                         int exIndex = listExId.get(j);
                         if (exIndex == id) {
                             Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, true, latitude
-                                    , longtitude, agendaUrl, mapUrl, isPassed);
+                                    , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
                             mode = true;
                             return exhibition;
                         }
                     }
                     if (mode != true) {
                         Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
-                                , longtitude, agendaUrl, mapUrl, isPassed);
+                                , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
                         return exhibition;
                     }
                 }
@@ -636,9 +642,11 @@ public class ExhibitionController {
                         String agendaUrl = rs.getString("agenda_url");
                         String mapUrl = rs.getString("map_url");
                         boolean isPassed = rs.getBoolean("is_expired");
+                        String websiteUrl = rs.getString("website_url");
+                        String preWebsiteText = rs.getString("pre_website_text");
 
                         Exhibition exhibition = new Exhibition(id,name,description,location,category,startDate,endDate,posterUrl,true,latitude
-                                ,longtitude,agendaUrl,mapUrl,isPassed);
+                                ,longtitude,agendaUrl,mapUrl,isPassed,websiteUrl,preWebsiteText);
 
                         listEx.add(exhibition);
                     }
@@ -986,10 +994,12 @@ public class ExhibitionController {
                 String agendaUrl = rs.getString("agenda_url");
                 String mapUrl = rs.getString("map_url");
                 boolean isPassed = rs.getBoolean("is_expired");
+                String websiteUrl = rs.getString("website_url");
+                String preWebsiteText = rs.getString("pre_website_text");
 
                 if(user_id==null) {
                     Exhibition exhibition = new Exhibition(id, name, description, location, categoryName, startDate, endDate, posterUrl, isFavourited, latitude
-                            , longtitude, agendaUrl, mapUrl, isPassed);
+                            , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
 
                     listEx.add(exhibition);
                 }
@@ -1000,7 +1010,7 @@ public class ExhibitionController {
                         int exIndex = listFaveId.get(j);
                         if(exIndex==id) {
                             Exhibition exhibition = new Exhibition(id, name, description, location, categoryName, startDate, endDate, posterUrl, true, latitude
-                                    , longtitude, agendaUrl, mapUrl, isPassed);
+                                    , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
 
                             listEx.add(exhibition);
                             mode = true;
@@ -1008,7 +1018,7 @@ public class ExhibitionController {
                     }
                     if(mode!=true){
                         Exhibition exhibition = new Exhibition(id, name, description, location, categoryName, startDate, endDate, posterUrl, isFavourited, latitude
-                                , longtitude, agendaUrl, mapUrl, isPassed);
+                                , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
 
                         listEx.add(exhibition);
                     }
@@ -1085,9 +1095,11 @@ public class ExhibitionController {
                 String agendaUrl = rs.getString("agenda_url");
                 String mapUrl = rs.getString("map_url");
                 boolean isPassed = rs.getBoolean("is_expired");
+                String websiteUrl = rs.getString("website_url");
+                String preWebsiteText = rs.getString("pre_website_text");
 
                 Exhibition exhibition = new Exhibition(id,name,description,location,category,startDate,endDate,posterUrl,isFavourited,latitude
-                ,longtitude,agendaUrl,mapUrl,isPassed);
+                ,longtitude,agendaUrl,mapUrl,isPassed,websiteUrl,preWebsiteText);
 
                 listEx.add(exhibition);
             }
@@ -1115,6 +1127,8 @@ public class ExhibitionController {
         String endDate = jason.getEndDate();
         String posterUrl = jason.getPosterUrl();
         Double latitude = jason.getLatitude();
+        String websiteUrl = jason.getWebsiteUrl();
+        String preWebsiteText = jason.getPreWebsiteText();
         if(latitude==null){
             latitude = 13.764936;
         }
@@ -1127,8 +1141,8 @@ public class ExhibitionController {
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url, "root", "password");
-        String insertEx = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url)" +
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+        String insertEx = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url, website_url, pre_website_text)" +
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(insertEx);
@@ -1143,6 +1157,8 @@ public class ExhibitionController {
             ps.setDouble(9,longtitude);
             ps.setString(10,agendaUrl);
             ps.setString(11,mapUrl);
+            ps.setString(12,websiteUrl);
+            ps.setString(13,preWebsiteText);
             ps.executeUpdate();
             conn.close();
 
@@ -1209,6 +1225,8 @@ public class ExhibitionController {
         Double longtitude = jason.getLongtitude();
         String agendaUrl = jason.getAgendaUrl();
         String mapUrl = jason.getMapUrl();
+        String websiteUrl = jason.getWebsiteUrl();
+        String preWebsiteText = jason.getPreWebsiteText();
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
@@ -1358,6 +1376,34 @@ public class ExhibitionController {
                 PreparedStatement ps = conn.prepareStatement(
                         "UPDATE exhibition SET map_url = ? WHERE id = ? ");
                 ps.setString(1,mapUrl);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(websiteUrl!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET website_url = ? WHERE id = ? ");
+                ps.setString(1,websiteUrl);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(preWebsiteText!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET pre_website_text = ? WHERE id = ? ");
+                ps.setString(1,websiteUrl);
                 ps.setInt(2,id);
                 ps.executeUpdate();
             }
@@ -1652,10 +1698,12 @@ public class ExhibitionController {
                 String agendaUrl = rs.getString("agenda_url");
                 String mapUrl = rs.getString("map_url");
                 boolean isPassed = rs.getBoolean("is_expired");
+                String websiteUrl = rs.getString("website_url");
+                String preWebsiteText = rs.getString("pre_website_text");
 
                 if(user_id==null) {
                     Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
-                            , longtitude, agendaUrl, mapUrl, isPassed);
+                            , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
 
                     listEx.add(exhibition);
                 }
@@ -1666,7 +1714,7 @@ public class ExhibitionController {
                         int exIndex = listFaveId.get(j);
                         if(exIndex==id) {
                             Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, true, latitude
-                                    , longtitude, agendaUrl, mapUrl, isPassed);
+                                    , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
 
                             listEx.add(exhibition);
                             mode = true;
@@ -1674,7 +1722,7 @@ public class ExhibitionController {
                     }
                     if(mode!=true){
                         Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
-                                , longtitude, agendaUrl, mapUrl, isPassed);
+                                , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
 
                         listEx.add(exhibition);
                     }

@@ -35,10 +35,30 @@ public class Exhibition {
     private String agendaUrl;
     private String mapUrl;
 
+    private String websiteUrl;
+
     private boolean isExpired;
+    private String preWebsiteText;
+
+    public String getPreWebsiteText() {
+        return preWebsiteText;
+    }
+
+    public void setPreWebsiteText(String preWebsiteText) {
+        this.preWebsiteText = preWebsiteText;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
+    }
+
 
     public Exhibition(int id,String name, String description, String location, String category, String startDate, String endDate, String posterUrl, boolean isFavourited
-    ,Double latitude, Double longtitude, String agendaUrl, String mapUrl, boolean isPassed)  {
+    ,Double latitude, Double longtitude, String agendaUrl, String mapUrl, boolean isPassed, String websiteUrl,String preWebsiteText)  {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -53,6 +73,8 @@ public class Exhibition {
         this.agendaUrl = agendaUrl;
         this.mapUrl = mapUrl;
         this.isExpired = isPassed;
+        this.websiteUrl = websiteUrl;
+        this.preWebsiteText = preWebsiteText;
     }
 
     public Exhibition(){
