@@ -18,14 +18,14 @@ public class ExhibitionObject {
     private String agendaUrl;
     private String mapUrl;
     private String websiteUrl;
-    private String preWebsiteText;
+    private String customWebsiteText;
 
-    public String getPreWebsiteText() {
-        return preWebsiteText;
+    public String getCustomWebsiteText() {
+        return customWebsiteText;
     }
 
-    public void setPreWebsiteText(String preWebsiteText) {
-        this.preWebsiteText = preWebsiteText;
+    public void setCustomWebsiteText(String customWebsiteText) {
+        this.customWebsiteText = customWebsiteText;
     }
 
     public String getWebsiteUrl() {

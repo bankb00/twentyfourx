@@ -66,7 +66,8 @@ public class UserController {
 
     }*/
 
-    @RequestMapping(value="/login",method= RequestMethod.GET)
+    //login facebook
+    @RequestMapping(value="/login/facebook",method= RequestMethod.GET)
     public @ResponseBody LoginObject userLogin(@RequestHeader(value="access_token") String tokenValue, @RequestHeader(value="user_id") String user_id) throws Exception {
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
@@ -94,10 +95,12 @@ public class UserController {
                     email = rs.getString("email");
                     mobileNo = rs.getString("mobile_no");
                     password = rs.getString("password");
+                    String usernameNa = rs.getString("username");
+                    String companyName = rs.getString("company_name");
 
                     login.setLoginSuccess(true);
 
-                    UserObject user = new UserObject(name,email,mobileNo,userId,tokenValue,password);
+                    UserObject user = new UserObject(usernameNa,name,email,mobileNo,userId,tokenValue,password,companyName);
                     //String jsonInString = mapper.writeValueAsString(user);
                     login.setUser(user);
                      //jsonInString = mapper.writeValueAsString(user);
@@ -122,7 +125,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value="/register",method= RequestMethod.POST)
+    @RequestMapping(value="/register/facebook",method= RequestMethod.POST)
     public @ResponseBody LoginObject userRegister(@RequestHeader(value="access_token") String tokenValue, @RequestHeader(value="user_id") String user_id, @RequestBody UserObject user) throws Exception {
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
@@ -133,11 +136,13 @@ public class UserController {
         String mobileNo = user.getMobileNo();
         String userId = user_id;
         String password = user.getPassword();
+        String username = user.getUsername();
+        String companyName = user.getCompanyName();
 
 
 
-        String insertEx = "INSERT INTO user (name, user_id, email, mobile_no, password)" +
-                "VALUES (?,?,?,?,?)";
+        String insertEx = "INSERT INTO user (name, user_id, email, mobile_no, password,username,company_name,type)" +
+                "VALUES (?,?,?,?,?,?,?,?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(insertEx);
@@ -146,6 +151,9 @@ public class UserController {
             ps.setString(3,email);
             ps.setString(4,mobileNo);
             ps.setString(5,password);
+            ps.setString(6,username);
+            ps.setString(7,companyName);
+            ps.setString(8,"facebook");
             ps.executeUpdate();
             conn.close();
 
@@ -211,7 +219,7 @@ public class UserController {
 
     }
 
-    @RequestMapping(value="/register/userName",method= RequestMethod.POST)
+    @RequestMapping(value="/register/username",method= RequestMethod.POST)
     public @ResponseBody void userRegisterForUserName(@RequestBody UserObject user) throws Exception {
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
@@ -221,12 +229,14 @@ public class UserController {
         String email = user.getEmail();
         String mobileNo = user.getMobileNo();
         String password = user.getPassword();
-        String username = "username";
+        String username = user.getUsername();
+        String companyName = user.getCompanyName();
+        String type = "username";
 
 
 
-        String insertUser = "INSERT INTO user (name, email, mobile_no, password, type)" +
-                "VALUES (?,?,?,?,?)";
+        String insertUser = "INSERT INTO user (name, email, mobile_no, password, type, username, company_name)" +
+                "VALUES (?,?,?,?,?,?,?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(insertUser);
@@ -234,7 +244,9 @@ public class UserController {
             ps.setString(2,email);
             ps.setString(3,mobileNo);
             ps.setString(4,password);
-            ps.setString(5,username);
+            ps.setString(5,type);
+            ps.setString(6,username);
+            ps.setString(7,companyName);
             ps.executeUpdate();
             conn.close();
 
@@ -255,16 +267,14 @@ public class UserController {
         Statement stmt = conn.createStatement();
         ResultSet rs;
         ResultSet abc;
-        String username = object.getUserName();
+        String username = object.getUsername();
         String password = object.getPassword();
         LoginObject login = new LoginObject(false,false);
 
         try {
             rs = stmt.executeQuery("SELECT * FROM user WHERE password = "+password+"");
             while (rs.next()) {
-                System.out.println(username);
-                System.out.println(password);
-               if(username.equalsIgnoreCase(rs.getString("name"))){
+               if(username.equalsIgnoreCase(rs.getString("username"))){
                    int id = rs.getInt("id");
                    //gen token
                    SecureRandom random = new SecureRandom();
@@ -296,10 +306,12 @@ public class UserController {
                                password = abc.getString("password");
                                String userId = abc.getString("user_id");
                                String tokenValue = abc.getString("access_token");
+                               String usernameNa = abc.getString("username");
+                               String companyName = abc.getString("company_name");
 
                                login.setLoginSuccess(true);
 
-                               UserObject user = new UserObject(name,email,mobileNo,userId,tokenValue,password);
+                               UserObject user = new UserObject(usernameNa,name,email,mobileNo,userId,tokenValue,password,companyName);
                                //String jsonInString = mapper.writeValueAsString(user);
                                login.setUser(user);
                                login.setIsRegister(true);
@@ -345,10 +357,12 @@ public class UserController {
                            password = abc.getString("password");
                            String userId = abc.getString("user_id");
                            String tokenValue = abc.getString("access_token");
+                           String usernameNa = abc.getString("username");
+                           String companyName = abc.getString("company_name");
 
                            login.setLoginSuccess(true);
 
-                           UserObject user = new UserObject(name,email,mobileNo,userId,tokenValue,password);
+                           UserObject user = new UserObject(usernameNa,name,email,mobileNo,userId,tokenValue,password,companyName);
                            //String jsonInString = mapper.writeValueAsString(user);
                            login.setUser(user);
                            login.setIsRegister(true);
@@ -373,15 +387,5 @@ public class UserController {
         return login;
 
     }
-
-    /*@RequestMapping(value="/testest",method= RequestMethod.GET)
-    public String eiei() throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        UserObject user = new UserObject("bankza","bankstch@gmail.com","156165156","15611651");
-
-        //Object to JSON in String
-        String jsonInString = mapper.writeValueAsString(user);
-        return jsonInString;
-    }*/
 
 }

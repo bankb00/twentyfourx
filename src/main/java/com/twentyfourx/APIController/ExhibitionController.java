@@ -35,7 +35,7 @@ public class ExhibitionController {
     private BoothRepository boothRepository;
 
     private List<String> categories = new ArrayList<>(Arrays.asList("Food", "Home & Decorate","Technology"
-            ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion","Others"));
+            ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion","Education","Others"));
 
 
     //@RequestMapping(value = "/getsize", method = RequestMethod.GET)
@@ -242,7 +242,7 @@ public class ExhibitionController {
                     String mapUrl = rs.getString("map_url");
                     boolean isPassed = rs.getBoolean("is_expired");
                     String websiteUrl = rs.getString("website_url");
-                    String preWebsiteText = rs.getString("pre_website_text");
+                    String preWebsiteText = rs.getString("custom_website_text");
 
 
 
@@ -320,7 +320,7 @@ public class ExhibitionController {
                         String mapUrl = rs.getString("map_url");
                         boolean isPassed = rs.getBoolean("is_expired");
                         String websiteUrl = rs.getString("website_url");
-                        String preWebsiteText = rs.getString("pre_website_text");
+                        String preWebsiteText = rs.getString("custom_website_text");
 
                         boolean mode = false;
 
@@ -417,7 +417,7 @@ public class ExhibitionController {
                     String mapUrl = rs.getString("map_url");
                     boolean isPassed = rs.getBoolean("is_expired");
                     String websiteUrl = rs.getString("website_url");
-                    String preWebsiteText = rs.getString("pre_website_text");
+                    String preWebsiteText = rs.getString("custom_website_text");
 
                     boolean mode = false;
 
@@ -643,7 +643,7 @@ public class ExhibitionController {
                         String mapUrl = rs.getString("map_url");
                         boolean isPassed = rs.getBoolean("is_expired");
                         String websiteUrl = rs.getString("website_url");
-                        String preWebsiteText = rs.getString("pre_website_text");
+                        String preWebsiteText = rs.getString("custom_website_text");
 
                         Exhibition exhibition = new Exhibition(id,name,description,location,category,startDate,endDate,posterUrl,true,latitude
                                 ,longtitude,agendaUrl,mapUrl,isPassed,websiteUrl,preWebsiteText);
@@ -995,7 +995,7 @@ public class ExhibitionController {
                 String mapUrl = rs.getString("map_url");
                 boolean isPassed = rs.getBoolean("is_expired");
                 String websiteUrl = rs.getString("website_url");
-                String preWebsiteText = rs.getString("pre_website_text");
+                String preWebsiteText = rs.getString("custom_website_text");
 
                 if(user_id==null) {
                     Exhibition exhibition = new Exhibition(id, name, description, location, categoryName, startDate, endDate, posterUrl, isFavourited, latitude
@@ -1096,7 +1096,7 @@ public class ExhibitionController {
                 String mapUrl = rs.getString("map_url");
                 boolean isPassed = rs.getBoolean("is_expired");
                 String websiteUrl = rs.getString("website_url");
-                String preWebsiteText = rs.getString("pre_website_text");
+                String preWebsiteText = rs.getString("custom_website_text");
 
                 Exhibition exhibition = new Exhibition(id,name,description,location,category,startDate,endDate,posterUrl,isFavourited,latitude
                 ,longtitude,agendaUrl,mapUrl,isPassed,websiteUrl,preWebsiteText);
@@ -1128,7 +1128,7 @@ public class ExhibitionController {
         String posterUrl = jason.getPosterUrl();
         Double latitude = jason.getLatitude();
         String websiteUrl = jason.getWebsiteUrl();
-        String preWebsiteText = jason.getPreWebsiteText();
+        String preWebsiteText = jason.getCustomWebsiteText();
         if(latitude==null){
             latitude = 13.764936;
         }
@@ -1141,7 +1141,7 @@ public class ExhibitionController {
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url, "root", "password");
-        String insertEx = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url, website_url, pre_website_text)" +
+        String insertEx = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url, website_url, custom_website_text)" +
                 "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         try {
@@ -1226,7 +1226,7 @@ public class ExhibitionController {
         String agendaUrl = jason.getAgendaUrl();
         String mapUrl = jason.getMapUrl();
         String websiteUrl = jason.getWebsiteUrl();
-        String preWebsiteText = jason.getPreWebsiteText();
+        String preWebsiteText = jason.getCustomWebsiteText();
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
@@ -1402,8 +1402,8 @@ public class ExhibitionController {
             try
             {
                 PreparedStatement ps = conn.prepareStatement(
-                        "UPDATE exhibition SET pre_website_text = ? WHERE id = ? ");
-                ps.setString(1,websiteUrl);
+                        "UPDATE exhibition SET custom_website_text = ? WHERE id = ? ");
+                ps.setString(1,preWebsiteText);
                 ps.setInt(2,id);
                 ps.executeUpdate();
             }
@@ -1699,7 +1699,7 @@ public class ExhibitionController {
                 String mapUrl = rs.getString("map_url");
                 boolean isPassed = rs.getBoolean("is_expired");
                 String websiteUrl = rs.getString("website_url");
-                String preWebsiteText = rs.getString("pre_website_text");
+                String preWebsiteText = rs.getString("custom_website_text");
 
                 if(user_id==null) {
                     Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
