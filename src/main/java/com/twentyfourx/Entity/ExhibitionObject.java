@@ -19,6 +19,15 @@ public class ExhibitionObject {
     private String mapUrl;
     private String websiteUrl;
     private String customWebsiteText;
+    private String reviewUrl;
+
+    public String getReviewUrl() {
+        return reviewUrl;
+    }
+
+    public void setReviewUrl(String reviewUrl) {
+        this.reviewUrl = reviewUrl;
+    }
 
     public String getCustomWebsiteText() {
         return customWebsiteText;

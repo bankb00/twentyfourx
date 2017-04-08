@@ -1129,6 +1129,7 @@ public class ExhibitionController {
         Double latitude = jason.getLatitude();
         String websiteUrl = jason.getWebsiteUrl();
         String preWebsiteText = jason.getCustomWebsiteText();
+        String reviewUrl = jason.getReviewUrl();
         if(latitude==null){
             latitude = 13.764936;
         }
@@ -1141,8 +1142,8 @@ public class ExhibitionController {
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url, "root", "password");
-        String insertEx = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url, website_url, custom_website_text)" +
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String insertEx = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url, website_url, custom_website_text,review_url )" +
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(insertEx);
@@ -1159,6 +1160,7 @@ public class ExhibitionController {
             ps.setString(11,mapUrl);
             ps.setString(12,websiteUrl);
             ps.setString(13,preWebsiteText);
+            ps.setString(14,reviewUrl);
             ps.executeUpdate();
             conn.close();
 
@@ -1227,6 +1229,7 @@ public class ExhibitionController {
         String mapUrl = jason.getMapUrl();
         String websiteUrl = jason.getWebsiteUrl();
         String preWebsiteText = jason.getCustomWebsiteText();
+        String reviewUrl = jason.getReviewUrl();
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
@@ -1404,6 +1407,20 @@ public class ExhibitionController {
                 PreparedStatement ps = conn.prepareStatement(
                         "UPDATE exhibition SET custom_website_text = ? WHERE id = ? ");
                 ps.setString(1,preWebsiteText);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(reviewUrl!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET review_url = ? WHERE id = ? ");
+                ps.setString(1,reviewUrl);
                 ps.setInt(2,id);
                 ps.executeUpdate();
             }

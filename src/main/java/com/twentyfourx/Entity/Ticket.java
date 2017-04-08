@@ -14,7 +14,7 @@ public class Ticket {
     private int id;
     private int exhibitionId;
     private String exhibitionName;
-    private boolean evaluation;
+    private boolean reviewed;
     private String userId;
     private String startDate;
     private String endDate;
@@ -22,6 +22,17 @@ public class Ticket {
     private String holderRole;
     private String email;
     private String mobileNo;
+    private String reviewUrl;
+
+    public String getReviewUrl() {
+        return reviewUrl;
+    }
+
+    public void setReviewUrl(String reviewUrl) {
+        this.reviewUrl = reviewUrl;
+    }
+
+
 
     public String getDepartment() {
         return department;
@@ -125,16 +136,15 @@ public class Ticket {
     }
 
 
-
-    public boolean isEvaluation() {
-        return evaluation;
+    public boolean isReviewed() {
+        return reviewed;
     }
 
-    public void setEvaluation(boolean evaluation) {
-        this.evaluation = evaluation;
+    public void setReviewed(boolean reviewed) {
+        this.reviewed = reviewed;
     }
 
-    public Ticket(int id, int exhibitionId, String exhibitionName, String userId, String startDate, String endDate, String holderName, String holderRole, boolean isExpired, String department, String registerDate, boolean evaluation,String email,String mobileNo) {
+    public Ticket(int id, int exhibitionId, String exhibitionName, String userId, String startDate, String endDate, String holderName, String holderRole, boolean isExpired, String department, String registerDate, boolean reviewed, String email, String mobileNo, String reviewUrl) {
         this.exhibitionId = exhibitionId;
         this.exhibitionName = exhibitionName;
         this.userId = userId;
@@ -146,9 +156,10 @@ public class Ticket {
         this.id = id;
         this.department = department;
         this.registeredDate = registerDate;
-        this.evaluation = evaluation;
+        this.reviewed = reviewed;
         this.email = email;
         this.mobileNo = mobileNo;
+        this.reviewUrl = reviewUrl;
     }
     public Ticket(){
 
