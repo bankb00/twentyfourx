@@ -153,6 +153,7 @@ public class ExhibitionController {
                 String mobileNo = rs.getString("mobile_no");
                 String holderRole = rs.getString("holder_role");
                 String userId  = rs.getString("user_id");
+                boolean reviewed = rs.getBoolean("reviewed");
                 UserObjectForExhibition userObjectForExhibition = new UserObjectForExhibition();
                 userObjectForExhibition.setRegisteredDate(registeredDate);
                 userObjectForExhibition.setName(name);
@@ -161,6 +162,7 @@ public class ExhibitionController {
                 userObjectForExhibition.setMonileNo(mobileNo);
                 userObjectForExhibition.setHolderRole(holderRole);
                 userObjectForExhibition.setDepartment(department);
+                userObjectForExhibition.setReviewed(reviewed);
                 listUser.add(userObjectForExhibition);
             }
             //conn.close();

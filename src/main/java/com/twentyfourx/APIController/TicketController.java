@@ -112,7 +112,7 @@ public class TicketController {
                         String companyName = rs.getString("department");
                         String registerdDate = rs.getString("registered_date");
                         boolean isExpired = rs.getBoolean("is_expired");
-                        boolean evaluation = rs.getBoolean("evaluation");
+                        boolean evaluation = rs.getBoolean("reviewed");
 
 
                         ExhibitionObjectForTicket exhibition = new ExhibitionObjectForTicket(exhibitionId,exhibitionName,startDate,endDate);
@@ -244,7 +244,7 @@ public class TicketController {
     }
 
     //
-    @RequestMapping(value="/{ticket_id}",method= RequestMethod.GET)
+    /*@RequestMapping(value="/{ticket_id}",method= RequestMethod.GET)
     public String checkEvaluation(@PathVariable Integer ticket_id) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url, "root", "password");
@@ -255,7 +255,7 @@ public class TicketController {
         {
 
                 PreparedStatement ps = conn.prepareStatement(
-                        "UPDATE ticket SET evaluation = TRUE WHERE id = ? ");
+                        "UPDATE ticket SET reviewed = TRUE WHERE id = ? ");
                 ps.setInt(1,ticket_id);
                 ps.executeUpdate();
 
@@ -266,5 +266,5 @@ public class TicketController {
             System.err.println(ex.getMessage());
         }
         return "Success";
-    }
+    }*/
 }

@@ -19,7 +19,16 @@ public class UserObjectForExhibition {
     private String mobileNo;
     private String holderRole;
     private String department;
-    private boolean evaluation;
+
+    public boolean isReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(boolean reviewed) {
+        this.reviewed = reviewed;
+    }
+
+    private boolean reviewed;
 
     public String getHolderRole() {
         return holderRole;
@@ -27,14 +36,6 @@ public class UserObjectForExhibition {
 
     public void setHolderRole(String holderRole) {
         this.holderRole = holderRole;
-    }
-
-    public boolean isEvaluation() {
-        return evaluation;
-    }
-
-    public void setEvaluation(boolean evaluation) {
-        this.evaluation = evaluation;
     }
 
     public String getDepartment() {
@@ -92,6 +93,6 @@ public class UserObjectForExhibition {
         this.department = department;
         this.registeredDate = registeredDate;
         this.holderRole = holderRole;
-        this.evaluation = evaluation;
+        this.reviewed = evaluation;
     }
 }

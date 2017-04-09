@@ -220,7 +220,7 @@ public class UserController {
     }
 
     @RequestMapping(value="/register/username",method= RequestMethod.POST)
-    public @ResponseBody void userRegisterForUserName(@RequestBody UserObject user) throws Exception {
+    public @ResponseBody LoginObject userRegisterForUserName(@RequestBody UserObject user) throws Exception {
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
@@ -232,6 +232,9 @@ public class UserController {
         String username = user.getUsername();
         String companyName = user.getCompanyName();
         String type = "username";
+        LoginObject login = new LoginObject(false,false);
+        String id = null;
+        int idOfUser=0;
 
 
 
@@ -239,7 +242,7 @@ public class UserController {
                 "VALUES (?,?,?,?,?,?,?)";
 
         try {
-            PreparedStatement ps = conn.prepareStatement(insertUser);
+            PreparedStatement ps = conn.prepareStatement(insertUser,Statement.RETURN_GENERATED_KEYS);
             ps.setString(1,name);
             ps.setString(2,email);
             ps.setString(3,mobileNo);
@@ -248,6 +251,21 @@ public class UserController {
             ps.setString(6,username);
             ps.setString(7,companyName);
             ps.executeUpdate();
+            ResultSet rsd = ps.getGeneratedKeys();
+            if ( rsd.next() ) {
+                id = Integer.toString(rsd.getInt(1));
+                idOfUser = rsd.getInt(1);
+            }
+            UserObject userNa = new UserObject(username,name,email,mobileNo,id,null,password,companyName);
+            login.setIsRegister(true);
+            login.setUser(userNa);
+
+            PreparedStatement psv = conn.prepareStatement(
+                    "UPDATE user SET user_id = ? WHERE id = ? ");
+            psv.setString(1,id);
+            psv.setInt(2,idOfUser);
+            psv.executeUpdate();
+
             conn.close();
 
         }
@@ -255,7 +273,7 @@ public class UserController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
-
+        return login;
         //return(userLogin(tokenValue,user_id));
 
     }
