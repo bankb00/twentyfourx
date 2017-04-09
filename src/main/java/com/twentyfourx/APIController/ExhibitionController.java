@@ -361,6 +361,7 @@ public class ExhibitionController {
         checkSize();
         int userId = 0;
         List<Integer> listExId = new ArrayList<Integer>();
+        ExhibitionContactObject contact = new ExhibitionContactObject();
         if(user_id==null) {
             return exhibitionRepository.findById(exhibitionId);
         }
@@ -369,6 +370,29 @@ public class ExhibitionController {
             Connection conn = DriverManager.getConnection(url, "root", "password");
             Statement stmt = conn.createStatement();
             ResultSet rs;
+            Statement stmt2 = conn.createStatement();
+            ResultSet abc;
+
+            try {
+
+                abc = stmt2.executeQuery("SELECT * FROM exhibition_contact WHERE exhibition_id = " + exhibitionId + " ");
+                while (abc.next()) {
+                    contact.setEmail(abc.getString("email"));
+                    contact.setFacebook(abc.getString("facebook"));
+                    contact.setFacebookUrl(abc.getString("facebook_url"));
+                    contact.setMobileNo(abc.getString("mobile_no"));
+                }
+                 PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET organizer_contact = ? WHERE id = ? ");
+                ps.setObject(1,contact);
+                ps.setInt(2,exhibitionId);
+                ps.executeUpdate();
+
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
 
             //get user id;
             try {
@@ -429,12 +453,14 @@ public class ExhibitionController {
                             Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, true, latitude
                                     , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
                             mode = true;
+                            exhibition.setOrganizerContact(contact);
                             return exhibition;
                         }
                     }
                     if (mode != true) {
                         Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
                                 , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
+                        exhibition.setOrganizerContact(contact);
                         return exhibition;
                     }
                 }
