@@ -887,8 +887,13 @@ public class ExhibitionController {
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
+        Statement stmt2 = conn.createStatement();
         ResultSet rs;
-
+        ResultSet abc;
+        String email = null;
+        String facebook = null;
+        String facebookUrl = null;
+        String mobileNo = null;
 
         try {
 
@@ -901,8 +906,26 @@ public class ExhibitionController {
                 int exId = rs.getInt("exhibition_id");
                 String logoUrl = rs.getString("logo_url");
                 String brochureUrl = rs.getString("brochure_url");
+                ////////////
+                BoothContactObject contact = new BoothContactObject();
+                abc = stmt2.executeQuery("SELECT * FROM booth_contact WHERE booth_id = "+id+"");
+
+                if(abc.next()){
+                    contact.setEmail(abc.getString("email"));
+                    contact.setFacebook(abc.getString("facebook"));
+                    contact.setFacebookUrl(abc.getString("facebook_url"));
+                    contact.setMobileNo(abc.getString("mobile_no"));
+                }
+                /*PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth SET contact = ? WHERE id = ? ");
+                ps.setObject(1,contact);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+                */
+                ////////////
 
                 Booth newbooth = new Booth(id,name,description,boothCode,exId,logoUrl,brochureUrl);
+                newbooth.setContact(contact);
                 listBooth.add(newbooth);
             }
             //conn.close();

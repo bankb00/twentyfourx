@@ -15,8 +15,17 @@ public class Booth {
     private String name;
     private String description;
     private String boothCode;
+    private BoothContactObject contact;
 
-    public Booth(int id,String name, String description, String boothCode, int exhibitionId, String logoUrl, String brochureUrl) {
+    public BoothContactObject getContact() {
+        return contact;
+    }
+
+    public void setContact(BoothContactObject contact) {
+        this.contact = contact;
+    }
+
+    public Booth(int id, String name, String description, String boothCode, int exhibitionId, String logoUrl, String brochureUrl) {
         this.id = id;
         this.name = name;
         this.description = description;
