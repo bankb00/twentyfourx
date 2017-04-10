@@ -359,10 +359,25 @@ public class ExhibitionController {
     @RequestMapping(value = "/{exhibitionId}", method=RequestMethod.GET)
     public Exhibition getExhibition(@PathVariable int exhibitionId,@RequestHeader(required = false, value = "user_id") String user_id) throws SQLException {
         checkSize();
+        ExhibitionContactObject contact = new ExhibitionContactObject();
         int userId = 0;
         List<Integer> listExId = new ArrayList<Integer>();
         if(user_id==null) {
-            return exhibitionRepository.findById(exhibitionId);
+            String url = "jdbc:mysql://localhost:3306/bankza";
+            Connection conn = DriverManager.getConnection(url, "root", "password");
+            Statement stmt2 = conn.createStatement();
+            ResultSet abc;
+            Exhibition exhibition = exhibitionRepository.findById(exhibitionId);
+            abc = stmt2.executeQuery("SELECT * FROM exhibition_contact WHERE exhibition_id = "+exhibitionId+"");
+
+            if(abc.next()){
+                contact.setEmail(abc.getString("email"));
+                contact.setFacebook(abc.getString("facebook"));
+                contact.setFacebookUrl(abc.getString("facebook_url"));
+                contact.setMobileNo(abc.getString("mobile_no"));
+            }
+            exhibition.setOrganizerContact(contact);
+            return exhibition;
         }
         else {
             String url = "jdbc:mysql://localhost:3306/bankza";
@@ -372,7 +387,7 @@ public class ExhibitionController {
             ResultSet rs;
             ResultSet abc;
 
-            ExhibitionContactObject contact = new ExhibitionContactObject();
+
             abc = stmt2.executeQuery("SELECT * FROM exhibition_contact WHERE exhibition_id = "+exhibitionId+"");
 
             if(abc.next()){
