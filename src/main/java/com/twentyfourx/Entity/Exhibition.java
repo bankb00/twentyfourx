@@ -40,6 +40,20 @@ public class Exhibition {
     private boolean isExpired;
     private String reviewUrl;
 
+
+    public ExhibitionContactObject getOrganizerContact() {
+        return organizerContact;
+    }
+
+    public void setOrganizerContact(ExhibitionContactObject organizerContact) {
+        this.organizerContact = organizerContact;
+    }
+
+    private ExhibitionContactObject organizerContact;
+
+
+
+
     public String getReviewUrl() {
         return reviewUrl;
     }

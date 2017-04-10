@@ -9,6 +9,16 @@ public class GetTicketObject {
     private String holderName;
     private String holderRole;
     private String department;
+    private boolean reviewed;
+    private String reviewUrl;
+
+    public String getReviewUrl() {
+        return reviewUrl;
+    }
+
+    public void setReviewUrl(String reviewUrl) {
+        this.reviewUrl = reviewUrl;
+    }
 
     public GetTicketObject() {
     }
@@ -33,7 +43,6 @@ public class GetTicketObject {
         this.reviewed = reviewed;
     }
 
-    private boolean reviewed;
 
     public String getDepartment() {
         return department;
@@ -44,7 +53,7 @@ public class GetTicketObject {
     }
 
 
-    public GetTicketObject(int id, ExhibitionObjectForTicket exhibition, String holderName, String holderRole, String dapartment, boolean isExpired,boolean evaluation,String registeredDate) {
+    public GetTicketObject(int id, ExhibitionObjectForTicket exhibition, String holderName, String holderRole, String dapartment, boolean isExpired,boolean evaluation,String registeredDate,String reviewUrl) {
         this.id = id;
         this.exhibition = exhibition;
         this.holderName = holderName;
@@ -53,6 +62,7 @@ public class GetTicketObject {
         this.isExpired = isExpired;
         this.reviewed = evaluation;
         this.registeredDate = registeredDate;
+        this.reviewUrl = reviewUrl;
     }
 
     public int getId() {

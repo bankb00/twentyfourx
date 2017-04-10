@@ -113,21 +113,20 @@ public class TicketController {
                         String registerdDate = rs.getString("registered_date");
                         boolean isExpired = rs.getBoolean("is_expired");
                         boolean evaluation = rs.getBoolean("reviewed");
+                        String reviewUrl = rs.getString("review_url");
 
 
                         ExhibitionObjectForTicket exhibition = new ExhibitionObjectForTicket(exhibitionId,exhibitionName,startDate,endDate);
 
                         if(checkDate(endDate)==true){
-                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,holderName,holderRole,companyName,true, evaluation,registerdDate);
+                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,holderName,holderRole,companyName,true, evaluation,registerdDate,reviewUrl);
                             listTicket.add(getTicketObject);
                         }
                         else{
-                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,holderName,holderRole,companyName,false, evaluation,registerdDate);
+                            GetTicketObject getTicketObject = new GetTicketObject(id,exhibition,holderName,holderRole,companyName,false, evaluation,registerdDate, reviewUrl);
                             listTicket.add(getTicketObject);
                         }
                         //Ticket ticket = new Ticket(id, exhibitionId,exhibitionName,holderId, startDate, endDate, holderName, holderRole, isExpired, companyName);
-
-
                     }
                     //conn.close();
                 }

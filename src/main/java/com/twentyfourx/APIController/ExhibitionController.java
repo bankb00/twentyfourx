@@ -368,10 +368,29 @@ public class ExhibitionController {
             String url = "jdbc:mysql://localhost:3306/bankza";
             Connection conn = DriverManager.getConnection(url, "root", "password");
             Statement stmt = conn.createStatement();
+            Statement stmt2 = conn.createStatement();
             ResultSet rs;
+            ResultSet abc;
+
+            ExhibitionContactObject contact = new ExhibitionContactObject();
+            abc = stmt2.executeQuery("SELECT * FROM exhibition_contact WHERE exhibition_id = "+exhibitionId+"");
+
+            if(abc.next()){
+                contact.setEmail(abc.getString("email"));
+                contact.setFacebook(abc.getString("facebook"));
+                contact.setFacebookUrl(abc.getString("facebook_url"));
+                contact.setMobileNo(abc.getString("mobile_no"));
+            }
 
             //get user id;
             try {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition SET organizer_contact = ? WHERE id = ? ");
+                ps.setObject(1,contact);
+                ps.setInt(2,exhibitionId);
+                ps.executeUpdate();
+
+                ////////////
 
                 rs = stmt.executeQuery("SELECT * FROM user ");
                 while (rs.next()) {
@@ -429,12 +448,14 @@ public class ExhibitionController {
                             Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, true, latitude
                                     , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
                             mode = true;
+                            exhibition.setOrganizerContact(contact);
                             return exhibition;
                         }
                     }
                     if (mode != true) {
                         Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
                                 , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
+                        exhibition.setOrganizerContact(contact);
                         return exhibition;
                     }
                 }
