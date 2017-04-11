@@ -1285,6 +1285,11 @@ public class ExhibitionController {
         int exhibitionId = exId;
         String logoUrl = jason.getLogoUrl();
         String brochureUrl = jason.getBrochureUrl();
+        String email = jason.getEmail();
+        String facebook = jason.getFacebook();
+        String facebookUrl = jason.getFacebookUrl();
+        String mobileNo = jason.getMobileNo();
+        int boothId = -1;
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url, "root", "password");
@@ -1298,7 +1303,7 @@ public class ExhibitionController {
         try {
             /*Statement stmt = conn.createStatement();
             stmt.executeUpdate(str);*/
-            PreparedStatement ps = conn.prepareStatement(insertBooth);
+            PreparedStatement ps = conn.prepareStatement(insertBooth,Statement.RETURN_GENERATED_KEYS);
             ps.setString(1,name);
             ps.setString(2,boothCode);
             ps.setString(3,description);
@@ -1306,8 +1311,34 @@ public class ExhibitionController {
             ps.setString(5,logoUrl);
             ps.setString(6,brochureUrl);
             ps.executeUpdate();
-            conn.close();
+            ResultSet rsd = ps.getGeneratedKeys();
+            if ( rsd.next() ) {
+                boothId = rsd.getInt(1);
+            }
+            //conn.close();
 
+        }
+        catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
+        String insertExContact = "INSERT INTO booth_contact (email, facebook, facebook_url, mobile_no, booth_id)" +
+                "VALUES (?,?,?,?,?)";
+        try {
+            PreparedStatement ps1 = conn.prepareStatement(insertExContact);
+            ps1.setString(1,email);
+            ps1.setString(2,facebook);
+            ps1.setString(3,facebookUrl);
+            ps1.setString(4,mobileNo);
+            ps1.setInt(5,boothId);
+            ps1.executeUpdate();
+
+            /*PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE exhibition SET organizer_contact = ? WHERE id = ? ");
+            ps.setObject(1,contact);
+            ps.setInt(2,exhibitionId);
+            ps.executeUpdate();*/
         }
         catch (Exception e) {
             System.err.println("Got an exception! ");
@@ -1651,9 +1682,69 @@ public class ExhibitionController {
         int exhibitionId = jason.getExhibitionId();
         String logoUrl = jason.getLogoUrl();
         String brochureUrl = jason.getBrochureUrl();
+        String email = jason.getEmail();
+        String facebook = jason.getFacebook();
+        String facebookUrl = jason.getFacebookUrl();
+        String mobileNo = jason.getMobileNo();
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
+        if(email!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth_contact SET email = ? WHERE booth_id = ? ");
+                ps.setString(1,email);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(facebook!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth_contact SET facebook = ? WHERE booth_id = ? ");
+                ps.setString(1,facebook);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(facebookUrl!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth_contact SET facebook_url = ? WHERE booth_id = ? ");
+                ps.setString(1,facebookUrl);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(mobileNo!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth_contact SET mobile_no = ? WHERE booth_id = ? ");
+                ps.setString(1,mobileNo);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
         if(name!=null){
             try
             {

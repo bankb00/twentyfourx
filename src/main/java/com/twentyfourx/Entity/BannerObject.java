@@ -5,6 +5,8 @@ package com.twentyfourx.Entity;
  */
 public class BannerObject {
     private int id;
+    private String bannerUrl;
+    private int exhibitionId;
 
     public int getId() {
         return id;
@@ -14,8 +16,7 @@ public class BannerObject {
         this.id = id;
     }
 
-    private String bannerUrl;
-    private int exhibitionId;
+
     public String getBannerUrl() {
         return bannerUrl;
     }
