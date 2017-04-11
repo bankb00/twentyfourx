@@ -6,10 +6,37 @@ import java.io.Serializable;
  * Created by Thanawat on 4/10/2017.
  */
 public class ExhibitionContactObject implements Serializable{
+    private String name;
+    private String description;
+    private String logoUrl;
     private String email;
     private String facebook;
     private String facebookUrl;
     private String mobileNo;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
 
     public String getEmail() {
         return email;

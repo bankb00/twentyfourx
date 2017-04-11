@@ -371,6 +371,9 @@ public class ExhibitionController {
             abc = stmt2.executeQuery("SELECT * FROM exhibition_contact WHERE exhibition_id = "+exhibitionId+"");
 
             if(abc.next()){
+                contact.setName(abc.getString("name"));
+                contact.setDescription(abc.getString("description"));
+                contact.setLogoUrl(abc.getString("logo_url"));
                 contact.setEmail(abc.getString("email"));
                 contact.setFacebook(abc.getString("facebook"));
                 contact.setFacebookUrl(abc.getString("facebook_url"));
@@ -1180,6 +1183,8 @@ public class ExhibitionController {
     @ResponseBody
     @RequestMapping(value="/add",method= RequestMethod.POST)
     public void addExhibition(@RequestBody ExhibitionObject jason) throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url, "root", "password");
         String name = jason.getName();
         String description = jason.getDescription();
         String location = jason.getLocation();
@@ -1191,6 +1196,17 @@ public class ExhibitionController {
         String websiteUrl = jason.getWebsiteUrl();
         String preWebsiteText = jason.getCustomWebsiteText();
         String reviewUrl = jason.getReviewUrl();
+        String organizerName = jason.getOrganizerName();
+        String organizerDetail = jason.getOrganizerDetail();
+        String organizerLogoUrl = jason.getOrganizerLogoUrl();
+        String email = jason.getEmail();
+        String facebook = jason.getFacebook();
+        String facebookUrl = jason.getFacebookUrl();
+        String mobileNo = jason.getMobileNo();
+
+        int exhibitionId = -1;
+
+
         if(latitude==null){
             latitude = 13.764936;
         }
@@ -1201,13 +1217,11 @@ public class ExhibitionController {
         String agendaUrl = jason.getAgendaUrl();
         String mapUrl = jason.getMapUrl();
 
-        String url = "jdbc:mysql://localhost:3306/bankza";
-        Connection conn = DriverManager.getConnection(url, "root", "password");
         String insertEx = "INSERT INTO exhibition (name, description, location, category, start_date, end_date, poster_url, latitude, longtitude, agenda_url, map_url, website_url, custom_website_text,review_url )" +
                 "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         try {
-            PreparedStatement ps = conn.prepareStatement(insertEx);
+            PreparedStatement ps = conn.prepareStatement(insertEx,Statement.RETURN_GENERATED_KEYS);
             ps.setString(1,name);
             ps.setString(2,description);
             ps.setString(3,location);
@@ -1223,8 +1237,37 @@ public class ExhibitionController {
             ps.setString(13,preWebsiteText);
             ps.setString(14,reviewUrl);
             ps.executeUpdate();
-            conn.close();
+            ResultSet rsd = ps.getGeneratedKeys();
+            if ( rsd.next() ) {
+                exhibitionId = rsd.getInt(1);
+            }
+            //conn.close();
 
+        }
+        catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
+        String insertExContact = "INSERT INTO exhibition_contact (name, description, logo_url, email, facebook, facebook_url, mobile_no, exhibition_id)" +
+                "VALUES (?,?,?,?,?,?,?,?)";
+        try {
+            PreparedStatement ps1 = conn.prepareStatement(insertExContact);
+            ps1.setString(1,organizerName);
+            ps1.setString(2,organizerDetail);
+            ps1.setString(3,organizerLogoUrl);
+            ps1.setString(4,email);
+            ps1.setString(5,facebook);
+            ps1.setString(6,facebookUrl);
+            ps1.setString(7,mobileNo);
+            ps1.setInt(8,exhibitionId);
+            ps1.executeUpdate();
+
+            /*PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE exhibition SET organizer_contact = ? WHERE id = ? ");
+            ps.setObject(1,contact);
+            ps.setInt(2,exhibitionId);
+            ps.executeUpdate();*/
         }
         catch (Exception e) {
             System.err.println("Got an exception! ");
@@ -1291,9 +1334,114 @@ public class ExhibitionController {
         String websiteUrl = jason.getWebsiteUrl();
         String preWebsiteText = jason.getCustomWebsiteText();
         String reviewUrl = jason.getReviewUrl();
+        String organizerName = jason.getOrganizerName();
+        String organizerDetail = jason.getOrganizerDetail();
+        String organizerLogoUrl = jason.getOrganizerLogoUrl();
+        String email = jason.getEmail();
+        String facebook = jason.getFacebook();
+        String facebookUrl = jason.getFacebookUrl();
+        String mobileNo = jason.getMobileNo();
 
         String url = "jdbc:mysql://localhost:3306/bankza";
         Connection conn = DriverManager.getConnection(url,"root","password");
+        if(organizerName!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition_contact SET name = ? WHERE exhibition_id = ? ");
+                ps.setString(1,organizerName);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(organizerDetail!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition_contact SET description = ? WHERE exhibition_id = ? ");
+                ps.setString(1,organizerDetail);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(organizerLogoUrl!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition_contact SET logo_url = ? WHERE exhibition_id = ? ");
+                ps.setString(1,organizerLogoUrl);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(email!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition_contact SET email = ? WHERE exhibition_id = ? ");
+                ps.setString(1,email);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(facebook!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition_contact SET facebook = ? WHERE exhibition_id = ? ");
+                ps.setString(1,facebook);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(facebookUrl!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition_contact SET facebook_url = ? WHERE exhibition_id = ? ");
+                ps.setString(1,facebookUrl);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        if(mobileNo!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE exhibition_contact SET mobile_no = ? WHERE exhibition_id = ? ");
+                ps.setString(1,mobileNo);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
         if(name!=null){
             try
             {

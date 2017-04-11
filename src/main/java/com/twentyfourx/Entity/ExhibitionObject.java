@@ -20,6 +20,70 @@ public class ExhibitionObject {
     private String websiteUrl;
     private String customWebsiteText;
     private String reviewUrl;
+    private String organizerName;
+
+    public String getOrganizerDetail() {
+        return organizerDetail;
+    }
+
+    public void setOrganizerDetail(String organizerDetail) {
+        this.organizerDetail = organizerDetail;
+    }
+
+    private String organizerDetail;
+    private String organizerLogoUrl;
+    private String email;
+    private String facebook;
+    private String facebookUrl;
+    private String mobileNo;
+
+    public String getOrganizerName() {
+        return organizerName;
+    }
+
+    public void setOrganizerName(String organizerName) {
+        this.organizerName = organizerName;
+    }
+
+    public String getOrganizerLogoUrl() {
+        return organizerLogoUrl;
+    }
+
+    public void setOrganizerLogoUrl(String organizerLogoUrl) {
+        this.organizerLogoUrl = organizerLogoUrl;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFacebook() {
+        return facebook;
+    }
+
+    public void setFacebook(String facebook) {
+        this.facebook = facebook;
+    }
+
+    public String getFacebookUrl() {
+        return facebookUrl;
+    }
+
+    public void setFacebookUrl(String facebookUrl) {
+        this.facebookUrl = facebookUrl;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
 
     public String getReviewUrl() {
         return reviewUrl;
