@@ -37,6 +37,8 @@ public class ExhibitionController {
     private List<String> categories = new ArrayList<>(Arrays.asList("Food", "Home & Decorate","Technology"
             ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion","Education","Others"));
 
+    private List<String> departments = new ArrayList<>(Arrays.asList("Computer","Chemical","Civil","Electronics"
+            ,"Food","Instrument","Industrial","Mechanical","Electrical","Telecomunication"));
 
     //@RequestMapping(value = "/getsize", method = RequestMethod.GET)
     public void checkSize() throws SQLException {
@@ -935,8 +937,10 @@ public class ExhibitionController {
         String mobileNo = null;
 
         try {
-
-            rs = stmt.executeQuery("SELECT * FROM booth WHERE exhibition_id = "+exhibitionId+" "+" ORDER BY booth_code ASC");
+            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM booth WHERE exhibition_id = ? "+" ORDER BY booth_code ASC");
+            pstmt.setInt(1,exhibitionId);
+            rs = pstmt.executeQuery();
+            //rs = stmt.executeQuery("SELECT * FROM booth WHERE exhibition_id = "+exhibitionId+" "+" ORDER BY booth_code ASC");
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String name = rs.getString("name");
@@ -1103,6 +1107,13 @@ public class ExhibitionController {
     public @ResponseBody List<String> getAllCategories() {
 
         return categories;
+    }
+
+    //List of Departments
+    @RequestMapping(value="/{exhibitionId}/departments",method= RequestMethod.GET)
+    public @ResponseBody List<String> getAllDepartments(@PathVariable int exhibitionId) {
+
+        return departments;
     }
 
 
