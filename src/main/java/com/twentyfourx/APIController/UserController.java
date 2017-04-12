@@ -117,7 +117,7 @@ public class UserController {
             return login;
         }
         else {
-            login.setIsRegister(true);
+            login.setIsRegistered(true);
 
             //UserObject user =mapper.readValue(jsonInString, UserObject.class);
 
@@ -257,7 +257,7 @@ public class UserController {
                 idOfUser = rsd.getInt(1);
             }
             UserObject userNa = new UserObject(username,name,email,mobileNo,id,null,password,companyName);
-            login.setIsRegister(true);
+            login.setIsRegistered(true);
             login.setUser(userNa);
 
             PreparedStatement psv = conn.prepareStatement(
@@ -289,8 +289,12 @@ public class UserController {
         String password = object.getPassword();
         LoginObject login = new LoginObject(false,false);
 
+
+
         try {
-            rs = stmt.executeQuery("SELECT * FROM user WHERE password = "+password+"");
+            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM user WHERE password = ?");
+            pstmt.setString(1,password);
+            rs = pstmt.executeQuery();
             while (rs.next()) {
                if(username.equalsIgnoreCase(rs.getString("username"))){
                    int id = rs.getInt("id");
@@ -332,7 +336,7 @@ public class UserController {
                                UserObject user = new UserObject(usernameNa,name,email,mobileNo,userId,tokenValue,password,companyName);
                                //String jsonInString = mapper.writeValueAsString(user);
                                login.setUser(user);
-                               login.setIsRegister(true);
+                               login.setIsRegistered(true);
                                //jsonInString = mapper.writeValueAsString(user);
 
                        }
@@ -383,7 +387,7 @@ public class UserController {
                            UserObject user = new UserObject(usernameNa,name,email,mobileNo,userId,tokenValue,password,companyName);
                            //String jsonInString = mapper.writeValueAsString(user);
                            login.setUser(user);
-                           login.setIsRegister(true);
+                           login.setIsRegistered(true);
                            //jsonInString = mapper.writeValueAsString(user);
 
                        }

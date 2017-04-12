@@ -5,50 +5,14 @@ package com.twentyfourx.APIController;
  */
 public class LoginObject {
     private boolean loginSuccess;
-    private boolean isRegister;
+    private boolean isRegistered;
 
     private UserObject user;
 
-    /*private String name;
-    private String email;
-    private String mobileNo;
-    private String password;*/
-
-    /*public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getMobileNo() {
-        return mobileNo;
-    }
-
-    public void setMobileNo(String mobileNo) {
-        this.mobileNo = mobileNo;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }*/
 
     public LoginObject(boolean isSuc, boolean isVa) {
         this.loginSuccess = isSuc;
-        this.isRegister = isVa;
+        this.isRegistered = isVa;
         this.user = null;
     }
 
@@ -60,12 +24,12 @@ public class LoginObject {
         this.loginSuccess = loginSuccess;
     }
 
-    public boolean getIsRegister() {
-        return isRegister;
+    public boolean getIsRegistered() {
+        return isRegistered;
     }
 
-    public void setIsRegister(boolean register) {
-        isRegister = register;
+    public void setIsRegistered(boolean register) {
+        isRegistered = register;
     }
 
 
