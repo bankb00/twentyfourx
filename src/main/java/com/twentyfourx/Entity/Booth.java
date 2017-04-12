@@ -16,6 +16,15 @@ public class Booth {
     private String description;
     private String boothCode;
     private BoothContactObject contact;
+    private String keywords;
+
+    public String getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
 
     public BoothContactObject getContact() {
         return contact;

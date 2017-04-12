@@ -384,7 +384,7 @@ public class ExhibitionController {
             exhibition.setOrganizerContact(contact);
             if(exhibitionId==20){
                 BoothCategory boothCategory = new BoothCategory();
-                boothCategory.setBoothCategory(departments);
+                boothCategory.setList(departments);
                 exhibition.setBoothCategory(boothCategory);
             }
             return exhibition;
@@ -476,7 +476,7 @@ public class ExhibitionController {
                             exhibition.setOrganizerContact(contact);
                             if(exhibitionId==20){
                                 BoothCategory boothCategory = new BoothCategory();
-                                boothCategory.setBoothCategory(departments);
+                                boothCategory.setList(departments);
                                 exhibition.setBoothCategory(boothCategory);
                             }
                             return exhibition;
@@ -488,7 +488,7 @@ public class ExhibitionController {
                         exhibition.setOrganizerContact(contact);
                         if(exhibitionId==20){
                             BoothCategory boothCategory = new BoothCategory();
-                            boothCategory.setBoothCategory(departments);
+                            boothCategory.setList(departments);
                             exhibition.setBoothCategory(boothCategory);
                         }
                         return exhibition;
@@ -995,9 +995,9 @@ public class ExhibitionController {
         //return boothRepository.findBoothByExhibitionId(exhibitionId);
     }
 
-    //get booth by department
-    @RequestMapping(value="/{exhibitionId}/booths/department",method= RequestMethod.GET)
-    public @ResponseBody List<Booth> getBoothsByDepartment(@PathVariable int exhibitionId,@RequestParam("department") String departmentna) throws SQLException {
+    //get booth by category
+    @RequestMapping(value="/{exhibitionId}/booths/category",method= RequestMethod.GET)
+    public @ResponseBody List<Booth> getBoothsByDepartment(@PathVariable int exhibitionId,@RequestParam("category") String departmentna) throws SQLException {
         String department = departmentna;
         List<Booth> listBooth = new ArrayList<Booth>();
         String url = "jdbc:mysql://localhost:3306/bankza";
@@ -1067,7 +1067,94 @@ public class ExhibitionController {
                 System.err.println(e.getMessage());
             }
         }
-       
+
+        return listBooth;
+        //return boothRepository.findBoothByExhibitionId(exhibitionId);
+    }
+
+    //search booth by keyword
+    @RequestMapping(value="/{exhibitionId}/booths/search",method= RequestMethod.GET)
+    public @ResponseBody List<Booth> getBoothsByKeyword(@PathVariable int exhibitionId,@RequestParam("keyword") String keyword) throws SQLException {
+        String keywordna = keyword;
+        List<Booth> listBooth = new ArrayList<Booth>();
+        String url = "jdbc:mysql://localhost:3306/bankza";
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        Statement stmt2 = conn.createStatement();
+        ResultSet rs;
+        ResultSet abc;
+        List<Integer> listBoothId = new ArrayList<Integer>();
+
+        try {
+
+            PreparedStatement pstmt1 = conn.prepareStatement("SELECT * FROM booth WHERE exhibition_id = ? "+" ORDER BY booth_code ASC");
+            pstmt1.setInt(1,exhibitionId);
+            rs = pstmt1.executeQuery();
+
+            //rs = stmt.executeQuery("SELECT * FROM booth WHERE exhibition_id = "+exhibitionId+" "+" ORDER BY booth_code ASC");
+            while (rs.next()) {
+
+                if(rs.getString("keywords")==null){
+
+                }
+                else if (rs.getString("keywords").toLowerCase().indexOf(keywordna.toLowerCase())!=-1) {
+                    listBoothId.add(rs.getInt("id"));
+                }
+                else if (rs.getString("name").toLowerCase().indexOf(keywordna.toLowerCase())!=-1) {
+                    listBoothId.add(rs.getInt("id"));
+                    System.out.println("hihi");
+                }
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+
+        for(int i = 0 ; i<listBoothId.size() ; i++){
+            int boothId = listBoothId.get(i);
+            try {
+                PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM booth WHERE id = ? "+" ORDER BY booth_code ASC");
+                pstmt.setInt(1,boothId);
+                rs = pstmt.executeQuery();
+                //rs = stmt.executeQuery("SELECT * FROM booth WHERE exhibition_id = "+exhibitionId+" "+" ORDER BY booth_code ASC");
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    String description = rs.getString("description");
+                    String boothCode = rs.getString("booth_code");
+                    int exId = rs.getInt("exhibition_id");
+                    String logoUrl = rs.getString("logo_url");
+                    String brochureUrl = rs.getString("brochure_url");
+                    ////////////
+                    BoothContactObject contact = new BoothContactObject();
+                    abc = stmt2.executeQuery("SELECT * FROM booth_contact WHERE booth_id = "+id+"");
+
+                    if(abc.next()){
+                        contact.setEmail(abc.getString("email"));
+                        contact.setFacebook(abc.getString("facebook"));
+                        contact.setFacebookUrl(abc.getString("facebook_url"));
+                        contact.setMobileNo(abc.getString("mobile_no"));
+                    }
+                    //PreparedStatement ps = conn.prepareStatement(
+                    //       "UPDATE booth SET contact = ? WHERE id = ? ");
+                    //ps.setObject(1,contact);
+                    //ps.setInt(2,id);
+                    //ps.executeUpdate();
+
+                    ////////////
+
+                    Booth newbooth = new Booth(id,name,description,boothCode,exId,logoUrl,brochureUrl);
+                    newbooth.setContact(contact);
+                    listBooth.add(newbooth);
+                }
+                //conn.close();
+            } catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+        }
+
         return listBooth;
         //return boothRepository.findBoothByExhibitionId(exhibitionId);
     }

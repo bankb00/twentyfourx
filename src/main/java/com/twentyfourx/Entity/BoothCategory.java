@@ -7,14 +7,14 @@ import java.util.List;
  * Created by Thanawat on 4/12/2017.
  */
 public class BoothCategory implements Serializable{
-    public List<String> getBoothCategory() {
-        return boothCategory;
+    public List<String> getList() {
+        return list;
     }
 
-    public void setBoothCategory(List<String> boothCategory) {
-        this.boothCategory = boothCategory;
+    public void setList(List<String> list) {
+        this.list = list;
     }
 
-    private List<String> boothCategory;
+    private List<String> list;
 
 }
