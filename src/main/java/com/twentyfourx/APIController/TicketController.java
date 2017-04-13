@@ -28,7 +28,9 @@ import java.util.List;
 @Controller
 @RequestMapping(path="/tickets") // This means URL's start with /demo (after Application path)
 public class TicketController {
-
+    private final String dbUrl = "thanawat.cdcwrwrcobem.ap-southeast-1.rds.amazonaws.com";
+    private final String url = "jdbc:mysql://" + dbUrl + ":3306/bankza";
+    
     /*@Autowired
     TicketRepository ticketRepository;*/
     @Autowired
@@ -38,7 +40,7 @@ public class TicketController {
     @RequestMapping(value="/{user_id}",method= RequestMethod.GET)
     public @ResponseBody
     List<GetTicketObject> getTicket(@RequestHeader(value="access_token") String tokenValue, @PathVariable String user_id) throws Exception {
-        String url = "jdbc:mysql://localhost:3306/bankza";
+        String url = this.url;
         Connection conn = DriverManager.getConnection(url, "root", "password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
@@ -192,7 +194,7 @@ public class TicketController {
         String str =sb.toString();
         in.close();
 
-        String dburl = "jdbc:mysql://localhost:3306/bankza";
+        String dburl = this.url;
         Connection conn = DriverManager.getConnection(dburl, "root", "password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
@@ -245,7 +247,7 @@ public class TicketController {
     //
     /*@RequestMapping(value="/{ticket_id}",method= RequestMethod.GET)
     public String checkEvaluation(@PathVariable Integer ticket_id) throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/bankza";
+        String url = this.url;
         Connection conn = DriverManager.getConnection(url, "root", "password");
         Statement stmt = conn.createStatement();
         ResultSet rs;

@@ -7,6 +7,7 @@ package com.twentyfourx;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +18,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Controller
 @EnableAutoConfiguration
 @SpringBootApplication
-public class HomeController {
+public class HomeController extends SpringBootServletInitializer {
     @RequestMapping("/")
-//    @ResponseBody
+    //    @ResponseBody
     public String home() {
         return "index";
     }

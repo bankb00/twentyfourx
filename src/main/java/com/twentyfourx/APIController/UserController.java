@@ -17,11 +17,12 @@ import java.sql.*;
 @Controller    // This means that this class is a Controller
 @RequestMapping(path="/users") // This means URL's start with /demo (after Application path)
 public class UserController {
-
+    private final String dbUrl = "thanawat.cdcwrwrcobem.ap-southeast-1.rds.amazonaws.com";
+    private final String url = "jdbc:mysql://" + dbUrl + ":3306/bankza";
 
     /*@RequestMapping(value="/add",method= RequestMethod.GET)
     public boolean addUser(@RequestHeader(value="access_token") String tokenValue,@RequestHeader(value="user_id") String user_id) throws Exception {
-        String url = "jdbc:mysql://localhost:3306/bankza";
+        String url = this.url;
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
@@ -69,7 +70,7 @@ public class UserController {
     //login facebook
     @RequestMapping(value="/login/facebook",method= RequestMethod.GET)
     public @ResponseBody LoginObject userLogin(@RequestHeader(value="access_token") String tokenValue, @RequestHeader(value="user_id") String user_id) throws Exception {
-        String url = "jdbc:mysql://localhost:3306/bankza";
+        String url = this.url;
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
@@ -127,7 +128,7 @@ public class UserController {
 
     @RequestMapping(value="/register/facebook",method= RequestMethod.POST)
     public @ResponseBody LoginObject userRegister(@RequestHeader(value="access_token") String tokenValue, @RequestHeader(value="user_id") String user_id, @RequestBody UserObject user) throws Exception {
-        String url = "jdbc:mysql://localhost:3306/bankza";
+        String url = this.url;
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
@@ -221,7 +222,7 @@ public class UserController {
 
     @RequestMapping(value="/register/username",method= RequestMethod.POST)
     public @ResponseBody LoginObject userRegisterForUserName(@RequestBody UserObject user) throws Exception {
-        String url = "jdbc:mysql://localhost:3306/bankza";
+        String url = this.url;
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
@@ -280,7 +281,7 @@ public class UserController {
 
     @RequestMapping(value="/login/username",method= RequestMethod.POST)
     public @ResponseBody LoginObject emailLogin(@RequestBody usernameLoginObject object) throws Exception {
-        String url = "jdbc:mysql://localhost:3306/bankza";
+        String url = this.url;
         Connection conn = DriverManager.getConnection(url,"root","password");
         Statement stmt = conn.createStatement();
         ResultSet rs;
