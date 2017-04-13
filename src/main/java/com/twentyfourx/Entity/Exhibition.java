@@ -39,8 +39,18 @@ public class Exhibition {
 
     private boolean isExpired;
     private String reviewUrl;
-    private ExhibitionContactObject organizerContact;
+    private OrganizerContact organizerContact;
     private BoothCategory boothCategory;
+
+    public OrganizerContact getOrganizerContact() {
+        return organizerContact;
+    }
+
+    public void setOrganizerContact(OrganizerContact organizerContact) {
+        this.organizerContact = organizerContact;
+    }
+
+
 
     public BoothCategory getBoothCategory() {
         return boothCategory;
@@ -49,20 +59,6 @@ public class Exhibition {
     public void setBoothCategory(BoothCategory boothCategory) {
         this.boothCategory = boothCategory;
     }
-
-
-
-
-
-    public ExhibitionContactObject getOrganizerContact() {
-        return organizerContact;
-    }
-
-    public void setOrganizerContact(ExhibitionContactObject organizerContact) {
-        this.organizerContact = organizerContact;
-    }
-
-
 
 
 
@@ -115,6 +111,7 @@ public class Exhibition {
         this.websiteUrl = websiteUrl;
         this.customWebsiteText = customWebsiteText;
         this.boothCategory = null;
+        this.organizerContact = null;
     }
 
     public Exhibition(){
@@ -133,6 +130,7 @@ public class Exhibition {
         this.mapUrl = "";
         this.isExpired = false;
         this.boothCategory = null;
+        this.organizerContact = null;
     }
 
 

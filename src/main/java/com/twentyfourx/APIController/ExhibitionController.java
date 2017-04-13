@@ -361,7 +361,9 @@ public class ExhibitionController {
     @RequestMapping(value = "/{exhibitionId}", method=RequestMethod.GET)
     public Exhibition getExhibition(@PathVariable int exhibitionId,@RequestHeader(required = false, value = "user_id") String user_id) throws SQLException {
         checkSize();
-        ExhibitionContactObject contact = new ExhibitionContactObject();
+        //ExhibitionContactObject contact = new ExhibitionContactObject();
+        OrganizerContact contactna = new OrganizerContact();
+        BoothContactObject boothContactObject = new BoothContactObject();
         int userId = 0;
         List<Integer> listExId = new ArrayList<Integer>();
         if(user_id==null) {
@@ -373,15 +375,20 @@ public class ExhibitionController {
             abc = stmt2.executeQuery("SELECT * FROM exhibition_contact WHERE exhibition_id = "+exhibitionId+"");
 
             if(abc.next()){
-                contact.setName(abc.getString("name"));
-                contact.setDescription(abc.getString("description"));
-                contact.setLogoUrl(abc.getString("logo_url"));
-                contact.setEmail(abc.getString("email"));
-                contact.setFacebook(abc.getString("facebook"));
-                contact.setFacebookUrl(abc.getString("facebook_url"));
-                contact.setMobileNo(abc.getString("mobile_no"));
+
+                contactna.setName(abc.getString("name"));
+                contactna.setLogoUrl(abc.getString("logo_url"));
+                contactna.setDescription(abc.getString("description"));
+                boothContactObject.setEmail(abc.getString("email"));
+                boothContactObject.setFacebook(abc.getString("facebook"));
+                boothContactObject.setFacebookUrl(abc.getString("facebook_url"));
+                boothContactObject.setMobileNo(abc.getString("mobile_no"));
+                contactna.setContact(boothContactObject);
+                exhibition.setOrganizerContact(contactna);
+
             }
-            exhibition.setOrganizerContact(contact);
+
+            //exhibition.setOrganizerContact(contact);
             if(exhibitionId==20){
                 BoothCategory boothCategory = new BoothCategory();
                 boothCategory.setList(departments);
@@ -389,7 +396,9 @@ public class ExhibitionController {
             }
             return exhibition;
         }
+
         else {
+            int contactStatus = 0;
             String url = "jdbc:mysql://localhost:3306/bankza";
             Connection conn = DriverManager.getConnection(url, "root", "password");
             Statement stmt = conn.createStatement();
@@ -397,21 +406,25 @@ public class ExhibitionController {
             ResultSet rs;
             ResultSet abc;
 
-
             abc = stmt2.executeQuery("SELECT * FROM exhibition_contact WHERE exhibition_id = "+exhibitionId+"");
 
             if(abc.next()){
-                contact.setEmail(abc.getString("email"));
-                contact.setFacebook(abc.getString("facebook"));
-                contact.setFacebookUrl(abc.getString("facebook_url"));
-                contact.setMobileNo(abc.getString("mobile_no"));
+                contactna.setName(abc.getString("name"));
+                contactna.setLogoUrl(abc.getString("logo_url"));
+                contactna.setDescription(abc.getString("description"));
+                boothContactObject.setEmail(abc.getString("email"));
+                boothContactObject.setFacebook(abc.getString("facebook"));
+                boothContactObject.setFacebookUrl(abc.getString("facebook_url"));
+                boothContactObject.setMobileNo(abc.getString("mobile_no"));
+                contactna.setContact(boothContactObject);
+                contactStatus =1;
             }
 
             //get user id;
             try {
                 PreparedStatement ps = conn.prepareStatement(
                         "UPDATE exhibition SET organizer_contact = ? WHERE id = ? ");
-                ps.setObject(1,contact);
+                ps.setObject(1,contactna);
                 ps.setInt(2,exhibitionId);
                 ps.executeUpdate();
 
@@ -473,7 +486,9 @@ public class ExhibitionController {
                             Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, true, latitude
                                     , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
                             mode = true;
-                            exhibition.setOrganizerContact(contact);
+                            if(contactStatus==1) {
+                                exhibition.setOrganizerContact(contactna);
+                            }
                             if(exhibitionId==20){
                                 BoothCategory boothCategory = new BoothCategory();
                                 boothCategory.setList(departments);
@@ -485,7 +500,9 @@ public class ExhibitionController {
                     if (mode != true) {
                         Exhibition exhibition = new Exhibition(id, name, description, location, category, startDate, endDate, posterUrl, isFavourited, latitude
                                 , longtitude, agendaUrl, mapUrl, isPassed,websiteUrl,preWebsiteText);
-                        exhibition.setOrganizerContact(contact);
+                        if(contactStatus==1) {
+                            exhibition.setOrganizerContact(contactna);
+                        }
                         if(exhibitionId==20){
                             BoothCategory boothCategory = new BoothCategory();
                             boothCategory.setList(departments);
@@ -964,6 +981,7 @@ public class ExhibitionController {
                 int exId = rs.getInt("exhibition_id");
                 String logoUrl = rs.getString("logo_url");
                 String brochureUrl = rs.getString("brochure_url");
+                String keyword = rs.getString("keywords");
                 ////////////
                 BoothContactObject contact = new BoothContactObject();
                 abc = stmt2.executeQuery("SELECT * FROM booth_contact WHERE booth_id = "+id+"");
@@ -984,6 +1002,7 @@ public class ExhibitionController {
 
                 Booth newbooth = new Booth(id,name,description,boothCode,exId,logoUrl,brochureUrl);
                 newbooth.setContact(contact);
+                newbooth.setKeywords(keyword);
                 listBooth.add(newbooth);
             }
             //conn.close();
@@ -1039,6 +1058,7 @@ public class ExhibitionController {
                     int exId = rs.getInt("exhibition_id");
                     String logoUrl = rs.getString("logo_url");
                     String brochureUrl = rs.getString("brochure_url");
+                    String keyword = rs.getString("keywords");
                     ////////////
                     BoothContactObject contact = new BoothContactObject();
                     abc = stmt2.executeQuery("SELECT * FROM booth_contact WHERE booth_id = "+id+"");
@@ -1059,6 +1079,7 @@ public class ExhibitionController {
 
                     Booth newbooth = new Booth(id,name,description,boothCode,exId,logoUrl,brochureUrl);
                     newbooth.setContact(contact);
+                    newbooth.setKeywords(keyword);
                     listBooth.add(newbooth);
                 }
                 //conn.close();
@@ -1126,6 +1147,7 @@ public class ExhibitionController {
                     int exId = rs.getInt("exhibition_id");
                     String logoUrl = rs.getString("logo_url");
                     String brochureUrl = rs.getString("brochure_url");
+                    String keyword3 = rs.getString("keywords");
                     ////////////
                     BoothContactObject contact = new BoothContactObject();
                     abc = stmt2.executeQuery("SELECT * FROM booth_contact WHERE booth_id = "+id+"");
@@ -1146,6 +1168,7 @@ public class ExhibitionController {
 
                     Booth newbooth = new Booth(id,name,description,boothCode,exId,logoUrl,brochureUrl);
                     newbooth.setContact(contact);
+                    newbooth.setKeywords(keyword3);
                     listBooth.add(newbooth);
                 }
                 //conn.close();

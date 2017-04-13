@@ -2,9 +2,9 @@ package com.twentyfourx.Entity;
 
 import java.io.Serializable;
 
-/**
- * Created by Thanawat on 4/10/2017.
- */
+
+ //Created by Thanawat on 4/10/2017.
+
 public class ExhibitionContactObject implements Serializable{
     private String name;
     private String description;
