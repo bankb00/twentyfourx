@@ -37,7 +37,7 @@ public class ExhibitionController {
     private List<String> categories = new ArrayList<>(Arrays.asList("Food", "Home & Decorate","Technology"
             ,"Book Fair","Travel & Tourism","Motor Show","Trade Show","Business","Pet","Cloth & Fashion","Education","Others"));
 
-    private List<String> departments = new ArrayList<>(Arrays.asList("Computer","Chemical","Civil","Electronics"
+    private List<String> departments = new ArrayList<>(Arrays.asList("All","Computer","Chemical","Civil","Electronics"
             ,"Food","Instrumentation & Control","Industrial","Mechanical","Electrical","Telecomunication"));
 
     //@RequestMapping(value = "/getsize", method = RequestMethod.GET)
@@ -1026,6 +1026,10 @@ public class ExhibitionController {
         ResultSet rs;
         ResultSet abc;
         List<Integer> listBoothId = new ArrayList<Integer>();
+
+        if(departmentna.equals("All")) {
+            return getAllBooths(exhibitionId);
+        }
 
         try {
             PreparedStatement pstmt1 = conn.prepareStatement("SELECT * FROM booth WHERE exhibition_id = ? "+" ORDER BY booth_code ASC");
