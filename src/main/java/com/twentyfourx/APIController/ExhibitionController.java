@@ -2098,7 +2098,7 @@ public class ExhibitionController {
         String str =sb.toString();
         in.close();
 
-        String dburl = "jdbc:mysql://localhost:3306/bankza";
+        String dburl = this.url;
         Connection conn = DriverManager.getConnection(dburl, "root", "password");
         Statement stmt = conn.createStatement();
         ResultSet rs;

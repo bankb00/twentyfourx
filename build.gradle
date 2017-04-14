@@ -35,19 +35,25 @@ dependencies {
 //////////////////////////////////////////////////////////////////////////////
 
 //group 'com.codesanook.springclinic'
-version '1.0-SNAPSHOT'
 buildscript {
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.2.RELEASE")
+		classpath('se.transmode.gradle:gradle-docker:1.2')
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'spring-boot'
+apply plugin: 'docker'
 sourceCompatibility = 1.8
+
+jar {
+	baseName = 'spring-boot-application'
+}
+
 repositories {
 	mavenCentral()
 }
@@ -63,4 +69,9 @@ dependencies {
 	compile ("org.springframework.social:spring-social-web:1.1.4.RELEASE")
 	//compile("org.springframework.social:spring-social-facebook")
 	testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+docker {
+	baseImage 'anapsix/alpine-java'
+	maintainer 'TanatipBoonloy "tanatip.jo@gmail.com"'
 }
