@@ -13,6 +13,10 @@ public class Booth {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
     private String name;
+
+    public Booth() {
+    }
+
     private String description;
     private String boothCode;
     private BoothContactObject contact;

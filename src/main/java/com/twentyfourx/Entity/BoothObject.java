@@ -16,6 +16,15 @@ public class BoothObject {
     private String facebook;
     private String facebookUrl;
     private String mobileNo;
+    private String keywords;
+
+    public String getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
 
     public String getEmail() {
         return email;

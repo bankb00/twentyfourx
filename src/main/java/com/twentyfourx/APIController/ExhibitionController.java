@@ -135,7 +135,7 @@ public class ExhibitionController {
             System.err.println(e.getMessage());
         }
         bannerList.setExhibitions(listEx);
-
+        conn.close();
         return bannerList;
     }
 
@@ -175,6 +175,7 @@ public class ExhibitionController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
+        conn.close();
         return listUser;
     }
 
@@ -210,6 +211,7 @@ public class ExhibitionController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
+        conn.close();
         return true;
     }
 
@@ -269,6 +271,7 @@ public class ExhibitionController {
                 System.err.println("Got an exception! ");
                 System.err.println(e.getMessage());
             }
+            conn.close();
             return listEx;
         }
         else{
@@ -355,7 +358,7 @@ public class ExhibitionController {
                     System.err.println(e.getMessage());
                 }
 
-
+            conn.close();
             return listEx;
         }
     }
@@ -397,6 +400,7 @@ public class ExhibitionController {
                 boothCategory.setList(departments);
                 exhibition.setBoothCategory(boothCategory);
             }
+            conn.close();
             return exhibition;
         }
 
@@ -511,6 +515,7 @@ public class ExhibitionController {
                             boothCategory.setList(departments);
                             exhibition.setBoothCategory(boothCategory);
                         }
+                        conn.close();
                         return exhibition;
                     }
                 }
@@ -520,7 +525,7 @@ public class ExhibitionController {
                 System.err.println(e.getMessage());
             }
 
-
+            conn.close();
             return null;
         }
     }
@@ -599,11 +604,13 @@ public class ExhibitionController {
                     }
                 }
                 SaveFavObject saveFavObject = new SaveFavObject(true,"Successfully add");
+                conn.close();
                 return saveFavObject;
 
             }
             else {
                 SaveFavObject saveFavObject = new SaveFavObject(false,"Please login first");
+                conn.close();
                 return saveFavObject;
             }
         }
@@ -645,11 +652,13 @@ public class ExhibitionController {
                     }
                 }
                 SaveFavObject saveFavObject = new SaveFavObject(true,"Successfully Unsave");
+                conn.close();
                 return saveFavObject;
 
             }
             else {
                 SaveFavObject saveFavObject = new SaveFavObject(false,"Please login first");
+                conn.close();
                 return saveFavObject;
             }
         }
@@ -857,6 +866,7 @@ public class ExhibitionController {
                     }
 
                     ReturnRegister reOb = new ReturnRegister(true,"You have successfully registered to "+exhibitionName+" You can check your ticket out on your ticket page. See you there!");
+                    conn.close();
                     return reOb;
                 }
                 //ถ้ามีในตาราง user ticket แล้ว ต้องเชคว่าที่มีอะ ใช่ที่สมัครไปยัง
@@ -944,12 +954,14 @@ public class ExhibitionController {
                 System.err.println(e.getMessage());
             }
             ReturnRegister reOb = new ReturnRegister(false,"Can not Register!");
+            conn.close();
             return reOb;
 
 
         }
         else {
             ReturnRegister reOb = new ReturnRegister(false,"Can not Register!, You do not have permission");
+            conn.close();
             return reOb;
         }
     }
@@ -989,11 +1001,13 @@ public class ExhibitionController {
                 BoothContactObject contact = new BoothContactObject();
                 abc = stmt2.executeQuery("SELECT * FROM booth_contact WHERE booth_id = "+id+"");
 
+                Booth newbooth = new Booth(id,name,description,boothCode,exId,logoUrl,brochureUrl);
                 if(abc.next()){
                     contact.setEmail(abc.getString("email"));
                     contact.setFacebook(abc.getString("facebook"));
                     contact.setFacebookUrl(abc.getString("facebook_url"));
                     contact.setMobileNo(abc.getString("mobile_no"));
+
                 }
                 /*PreparedStatement ps = conn.prepareStatement(
                         "UPDATE booth SET contact = ? WHERE id = ? ");
@@ -1003,7 +1017,7 @@ public class ExhibitionController {
                 */
                 ////////////
 
-                Booth newbooth = new Booth(id,name,description,boothCode,exId,logoUrl,brochureUrl);
+
                 newbooth.setContact(contact);
                 newbooth.setKeywords(keyword);
                 listBooth.add(newbooth);
@@ -1013,6 +1027,7 @@ public class ExhibitionController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
+        conn.close();
         return listBooth;
         //return boothRepository.findBoothByExhibitionId(exhibitionId);
     }
@@ -1095,7 +1110,7 @@ public class ExhibitionController {
                 System.err.println(e.getMessage());
             }
         }
-
+        conn.close();
         return listBooth;
         //return boothRepository.findBoothByExhibitionId(exhibitionId);
     }
@@ -1184,7 +1199,7 @@ public class ExhibitionController {
                 System.err.println(e.getMessage());
             }
         }
-
+        conn.close();
         return listBooth;
         //return boothRepository.findBoothByExhibitionId(exhibitionId);
     }
@@ -1303,7 +1318,7 @@ public class ExhibitionController {
             }
 
         }
-
+        conn.close();
         return listEx;
 
     }
@@ -1328,11 +1343,69 @@ public class ExhibitionController {
 
     //Get booth
     @RequestMapping(value="/{exhibitionId}/booths/{boothId}",method= RequestMethod.GET)
-    public @ResponseBody Booth getBooth(@PathVariable int boothId){
-        // This returns a JSON or XML with the users
-        return boothRepository.findBoothById(boothId);
+    public @ResponseBody Booth getBooth(@PathVariable int boothId) throws SQLException {
+
+        // url
+        Connection conn = DriverManager.getConnection(url,"root","password");
+        Statement stmt = conn.createStatement();
+        Statement stmt2 = conn.createStatement();
+        ResultSet rs;
+        ResultSet abc;
+        String email = null;
+        String facebook = null;
+        String facebookUrl = null;
+        String mobileNo = null;
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM booth WHERE id = ? ");
+            pstmt.setInt(1,boothId);
+            rs = pstmt.executeQuery();
+            //rs = stmt.executeQuery("SELECT * FROM booth WHERE exhibition_id = "+exhibitionId+" "+" ORDER BY booth_code ASC");
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                String boothCode = rs.getString("booth_code");
+                int exId = rs.getInt("exhibition_id");
+                String logoUrl = rs.getString("logo_url");
+                String brochureUrl = rs.getString("brochure_url");
+                String keyword = rs.getString("keywords");
+                ////////////
+                BoothContactObject contact = new BoothContactObject();
+
+                PreparedStatement pstmt2 = conn.prepareStatement("SELECT * FROM booth_contact WHERE booth_id = ? ");
+                pstmt2.setInt(1,boothId);
+                abc = pstmt2.executeQuery();
+
+                Booth newbooth = new Booth(id,name,description,boothCode,exId,logoUrl,brochureUrl);
+                if(abc.next()){
+                    contact.setEmail(abc.getString("email"));
+                    contact.setFacebook(abc.getString("facebook"));
+                    contact.setFacebookUrl(abc.getString("facebook_url"));
+                    contact.setMobileNo(abc.getString("mobile_no"));
+
+                }
+                /*PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth SET contact = ? WHERE id = ? ");
+                ps.setObject(1,contact);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+                */
+                ////////////
 
 
+                newbooth.setContact(contact);
+                newbooth.setKeywords(keyword);
+                conn.close();
+                return newbooth;
+            }
+            //conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+        //return boothRepository.findBoothByExhibitionId(exhibitionId);
     }
 
     //Save e-bro
@@ -1393,6 +1466,7 @@ public class ExhibitionController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
+        //conn.close();
         return listEx;
 
 
@@ -1493,6 +1567,7 @@ public class ExhibitionController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
+        conn.close();
     }
 
     //add booth
@@ -1509,6 +1584,7 @@ public class ExhibitionController {
         String facebook = jason.getFacebook();
         String facebookUrl = jason.getFacebookUrl();
         String mobileNo = jason.getMobileNo();
+        String keyword = jason.getKeywords();
         int boothId = -1;
 
         // url
@@ -1517,8 +1593,8 @@ public class ExhibitionController {
                 "VALUES ('"+name+"', '"+boothCode+"', '"+description+"', '"+exhibitionId+"', '"+logoUrl+"', '"+brochureUrl+"')";*/
 
         String insertBooth = "INSERT INTO booth"
-                + "(name, booth_code, description, exhibition_id, logo_url, brochure_url) VALUES"
-                + "(?,?,?,?,?,?)";
+                + "(name, booth_code, description, exhibition_id, logo_url, brochure_url, keywords) VALUES"
+                + "(?,?,?,?,?,?,?)";
 
         try {
             /*Statement stmt = conn.createStatement();
@@ -1530,6 +1606,7 @@ public class ExhibitionController {
             ps.setInt(4,exhibitionId);
             ps.setString(5,logoUrl);
             ps.setString(6,brochureUrl);
+            ps.setString(7,keyword);
             ps.executeUpdate();
             ResultSet rsd = ps.getGeneratedKeys();
             if ( rsd.next() ) {
@@ -1564,6 +1641,7 @@ public class ExhibitionController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
+        conn.close();
     }
 
     //Update exhibiiton
@@ -1889,6 +1967,7 @@ public class ExhibitionController {
                 System.err.println(ex.getMessage());
             }
         }
+        conn.close();
     }
 
     //Update booth
@@ -1906,9 +1985,31 @@ public class ExhibitionController {
         String facebook = jason.getFacebook();
         String facebookUrl = jason.getFacebookUrl();
         String mobileNo = jason.getMobileNo();
+        String keyword = jason.getKeywords();
 
         // url
         Connection conn = DriverManager.getConnection(url,"root","password");
+        ResultSet rs;
+        Statement stmt = conn.createStatement();
+        rs = stmt.executeQuery("SELECT * FROM booth_contact WHERE booth_id = "+boothId+"");
+        if(!(rs.next())){
+            String insertExContact = "INSERT INTO booth_contact (email, facebook, facebook_url, mobile_no, booth_id)" +
+                    "VALUES (?,?,?,?,?)";
+            try {
+                PreparedStatement ps1 = conn.prepareStatement(insertExContact);
+                ps1.setString(1, email);
+                ps1.setString(2, facebook);
+                ps1.setString(3, facebookUrl);
+                ps1.setString(4, mobileNo);
+                ps1.setInt(5, boothId);
+                ps1.executeUpdate();
+            }
+            catch (Exception e) {
+                System.err.println("Got an exception! ");
+                System.err.println(e.getMessage());
+            }
+        }
+
         if(email!=null){
             try
             {
@@ -2049,6 +2150,21 @@ public class ExhibitionController {
                 System.err.println(ex.getMessage());
             }
         }
+        if(keyword!=null){
+            try
+            {
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE booth SET keywords = ? WHERE id = ? ");
+                ps.setString(1,keyword);
+                ps.setInt(2,id);
+                ps.executeUpdate();
+            }
+            catch (SQLException ex)
+            {
+                System.err.println(ex.getMessage());
+            }
+        }
+        conn.close();
     }
 
 
@@ -2117,7 +2233,7 @@ public class ExhibitionController {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
-
+        conn.close();
         return isValid;
 
     }
@@ -2267,7 +2383,7 @@ public class ExhibitionController {
             }
 
         }
-
+        conn.close();
         return listEx;
 
     }
